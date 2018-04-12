@@ -5,12 +5,12 @@ class Actor {
 	protected:
 		SpriteSet* sprite;
 		vec2f posInWorld;
-		id_t id;
+		game_id id;
 		float speed;
 		Game::Direction direction;
 
 	public:
-		Actor(SpriteSet* sprite, vec2f pos, float speed, id_t id);
+		Actor(SpriteSet* sprite, vec2f pos, float speed, game_id id);
 		SpriteSet* getSpriteSet();
 		virtual void move(vec2f delta, sf::Time elapsed);
 		virtual void moveTo(vec2f pos, sf::Time elapsed);
@@ -19,7 +19,7 @@ class Actor {
 
 class NPC : public Actor {
 	public:
-		NPC(SpriteSet* sprite, vec2f pos, float speed, id_t id);
+		NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id);
 		virtual void action(sf::Time elapsed);
 };
 

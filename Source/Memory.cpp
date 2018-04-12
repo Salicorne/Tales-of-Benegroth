@@ -19,24 +19,24 @@ MemoryManager::~MemoryManager() {
 	texturesMutex.unlock();
 }
 
-id_t MemoryManager::getFreeSpriteId() {
+game_id MemoryManager::getFreeSpriteId() {
 	counter++;
 	return 10000 + counter;
 }
 
-void MemoryManager::addTexture(std::string path, id_t id) {
+void MemoryManager::addTexture(std::string path, game_id id) {
 	texturesMutex.lock();
 	this->textures.push_back(new Texture(path, id));
 	texturesMutex.unlock();
 }
 
-void MemoryManager::addSprite(id_t texture, vec2f posInWorld, id_t id, float feetOffset) {
+void MemoryManager::addSprite(game_id texture, vec2f posInWorld, game_id id, float feetOffset) {
 	spritesMutex.lock();
 	sprites.push_back(new Sprite(getTexture(texture), posInWorld, id, feetOffset));
 	spritesMutex.unlock();
 }
 
-void MemoryManager::addTreeSprite(id_t trunk, id_t leaves, int offset, vec2f posInWorld, id_t id, float feetOffset) {
+void MemoryManager::addTreeSprite(game_id trunk, game_id leaves, int offset, vec2f posInWorld, game_id id, float feetOffset) {
 	spritesMutex.lock();
 	TreeSprite* tree = new TreeSprite(getTexture(trunk), getTexture(leaves), offset, posInWorld, id, feetOffset);
 	tree->blurs(true);
@@ -44,19 +44,19 @@ void MemoryManager::addTreeSprite(id_t trunk, id_t leaves, int offset, vec2f pos
 	spritesMutex.unlock();
 }
 
-void MemoryManager::addAnimatedSprite(id_t texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, id_t id, float feetOffset) {
+void MemoryManager::addAnimatedSprite(game_id texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset) {
 	spritesMutex.lock();
 	sprites.push_back(new AnimatedSprite(getTexture(texture), rect, duration, posInWorld, id, feetOffset));
 	spritesMutex.unlock();
 }
 
-void MemoryManager::addAdditionalSprite(id_t texture, sf::IntRect rect, sf::Time duration, id_t id) {
+void MemoryManager::addAdditionalSprite(game_id texture, sf::IntRect rect, sf::Time duration, game_id id) {
 	spritesMutex.lock();
 	sprites.push_back(new AdditionalSprite(getTexture(texture), rect, duration, id));
 	spritesMutex.unlock();
 }
 
-SpriteSet* MemoryManager::addSpriteSet(id_t texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, id_t id, float feetOffset) {
+SpriteSet* MemoryManager::addSpriteSet(game_id texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset) {
 	SpriteSet* res = new SpriteSet(getTexture(texture), rect, duration, posInWorld, id, feetOffset);
 	spritesMutex.lock();
 	sprites.push_back(res);
@@ -64,13 +64,13 @@ SpriteSet* MemoryManager::addSpriteSet(id_t texture, sf::IntRect rect, sf::Time 
 	return res;
 }
 
-void MemoryManager::addRepeatedSprite(id_t texture, int w, int h, vec2f posInWorld, id_t id, float feetOffset) {
+void MemoryManager::addRepeatedSprite(game_id texture, int w, int h, vec2f posInWorld, game_id id, float feetOffset) {
 	spritesMutex.lock();
 	sprites.push_back(new RepeatedSprite(getTexture(texture), w, h, posInWorld, id, feetOffset));
 	spritesMutex.unlock();
 }
 
-Texture& MemoryManager::getTexture(id_t id) {
+Texture& MemoryManager::getTexture(game_id id) {
 	Texture* t = &defaultTexture;
 	texturesMutex.lock();
 	for (Texture* txt : textures) {
@@ -80,7 +80,7 @@ Texture& MemoryManager::getTexture(id_t id) {
 	return *t;
 }
 
-Sprite& MemoryManager::getSprite(id_t id) {
+Sprite& MemoryManager::getSprite(game_id id) {
 	Sprite* s = &defaultSprite;
 	spritesMutex.lock();
 	for (Sprite* spr : sprites) {

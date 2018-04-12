@@ -1,6 +1,6 @@
 #include "Actor.h"
 
-Actor::Actor(SpriteSet* sprite, vec2f pos, float speed, id_t id) : sprite(sprite), posInWorld(pos), speed(speed), id(id) {
+Actor::Actor(SpriteSet* sprite, vec2f pos, float speed, game_id id) : sprite(sprite), posInWorld(pos), speed(speed), id(id) {
 	sprite->setPosInWorld(pos);
 	direction = Game::Direction::South;
 }
@@ -28,7 +28,7 @@ SpriteSet* Actor::getSpriteSet() {
 	return sprite;
 }
 
-NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, id_t id) : Actor(sprite, pos, speed, id) {}
+NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id) : Actor(sprite, pos, speed, id) {}
 
 void NPC::action(sf::Time elapsed) {
 	moveTo(vec2f(0, 0), elapsed);

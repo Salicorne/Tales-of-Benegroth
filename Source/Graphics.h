@@ -4,18 +4,18 @@
 
 class Texture : public sf::Texture {
 	protected: 
-		id_t id;
+		game_id id;
 		bool loaded;
 
 	public:
-		Texture(std::string path, id_t id);
-		id_t getId();
+		Texture(std::string path, game_id id);
+		game_id getId();
 		bool isLoaded();
 };
 
 class Sprite : public sf::Sprite {
 	protected: 
-		id_t id;
+		game_id id;
 		bool loaded;
 		int layer;
 		vec2f posInWorld;
@@ -24,8 +24,8 @@ class Sprite : public sf::Sprite {
 		bool mustBlur;
 
 	public:
-		Sprite(Texture& texture, vec2f posInWorld, id_t id, float feetOffset);
-		id_t getId();
+		Sprite(Texture& texture, vec2f posInWorld, game_id id, float feetOffset);
+		game_id getId();
 		int getLayer() const;
 		void setLayer(int layer);
 		void updatePosition(vec2f windowPos);
@@ -50,14 +50,14 @@ class TreeSprite : public Sprite {
 		int offset;
 
 	public:
-		TreeSprite(Texture& trunk, Texture& top, int offset, vec2f posInWorld, id_t id, float feetOffset);
+		TreeSprite(Texture& trunk, Texture& top, int offset, vec2f posInWorld, game_id id, float feetOffset);
 		virtual void draw(sf::RenderTarget& window);
 		virtual void blur(bool b);
 };
 
 class RepeatedSprite : public Sprite {
 	public:
-		RepeatedSprite(Texture& texture, int w, int h, vec2f posInWorld, id_t id, float feetOffset);
+		RepeatedSprite(Texture& texture, int w, int h, vec2f posInWorld, game_id id, float feetOffset);
 };
 
 class AnimatedSprite : public Sprite {
@@ -66,7 +66,7 @@ class AnimatedSprite : public Sprite {
 		sf::Time animationCounter;
 
 	public: 
-		AnimatedSprite(Texture& texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, id_t id, float feetOffset);
+		AnimatedSprite(Texture& texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset);
 		virtual void setAnimation(Game::Animation a);
 		virtual void animate(sf::Time elapsed);
 		void animateStep();
@@ -74,7 +74,7 @@ class AnimatedSprite : public Sprite {
 
 class AdditionalSprite : public AnimatedSprite {
 	public:
-		AdditionalSprite(Texture& texture, sf::IntRect rect, sf::Time duration, id_t id);
+		AdditionalSprite(Texture& texture, sf::IntRect rect, sf::Time duration, game_id id);
 		virtual void draw(sf::RenderTarget& window);
 		virtual void animate(sf::Time elapsed);
 };
@@ -84,7 +84,7 @@ class SpriteSet : public AnimatedSprite {
 		std::vector<AdditionalSprite*> sprites;
 
 	public:
-		SpriteSet(Texture& texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, id_t id, float feetOffset);
+		SpriteSet(Texture& texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset);
 		void addAdditionalSprite(AdditionalSprite& spr);
 		virtual void draw(sf::RenderTarget& window);
 		virtual void setAnimation(Game::Animation a);

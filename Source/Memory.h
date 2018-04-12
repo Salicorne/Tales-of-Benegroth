@@ -10,21 +10,21 @@ class MemoryManager {
 		vec2f windowPosition;
 		std::mutex spritesMutex;
 		std::mutex texturesMutex;
-		id_t counter;
+		game_id counter;
 
 	public:
 		MemoryManager();
 		~MemoryManager();
-		id_t getFreeSpriteId();
-		void addTexture(std::string path, id_t id);
-		void addSprite(id_t texture, vec2f posInWorld, id_t id, float feetOffset = 0);
-		void addTreeSprite(id_t trunk, id_t leaves, int offset, vec2f posInWorld, id_t id, float feetOffset = 0);
-		void addAnimatedSprite(id_t texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, id_t id, float feetOffset = 0);
-		void addAdditionalSprite(id_t texture, sf::IntRect rect, sf::Time duration, id_t id);
-		SpriteSet* addSpriteSet(id_t texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, id_t id, float feetOffset = 0);
-		void addRepeatedSprite(id_t texture, int w, int h, vec2f posInWorld, id_t id, float feetOffset = 0);
-		Texture& getTexture(id_t id);
-		Sprite& getSprite(id_t id);
+		game_id getFreeSpriteId();
+		void addTexture(std::string path, game_id id);
+		void addSprite(game_id texture, vec2f posInWorld, game_id id, float feetOffset = 0);
+		void addTreeSprite(game_id trunk, game_id leaves, int offset, vec2f posInWorld, game_id id, float feetOffset = 0);
+		void addAnimatedSprite(game_id texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset = 0);
+		void addAdditionalSprite(game_id texture, sf::IntRect rect, sf::Time duration, game_id id);
+		SpriteSet* addSpriteSet(game_id texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset = 0);
+		void addRepeatedSprite(game_id texture, int w, int h, vec2f posInWorld, game_id id, float feetOffset = 0);
+		Texture& getTexture(game_id id);
+		Sprite& getSprite(game_id id);
 		vec2f getWindowPos();
 		void updateBlur(vec2f playerPos);
 

@@ -1,15 +1,17 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <math.h>
 #include <time.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <functional>
 #include <thread>
 #include <mutex>
 
-typedef int id_t;
+typedef int game_id;
 typedef sf::Vector2f vec2f;
 
 float norm(vec2f vec);

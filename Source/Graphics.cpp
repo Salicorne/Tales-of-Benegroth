@@ -2,7 +2,7 @@
 
 
 
-Texture::Texture(std::string path, id_t id) : id(id) {
+Texture::Texture(std::string path, game_id id) : id(id) {
 	loaded = path != "" && this->loadFromFile(path);
 	if (!loaded) {
 		if (path != "") { std::cerr << "Error loading texture at " << path << std::endl; }
@@ -18,7 +18,7 @@ Texture::Texture(std::string path, id_t id) : id(id) {
 	}
 }
 
-id_t Texture::getId() {
+game_id Texture::getId() {
 	return id;
 }
 
@@ -26,14 +26,14 @@ bool Texture::isLoaded() {
 	return loaded;
 }
 
-Sprite::Sprite(Texture& texture, vec2f posInWorld, id_t id, float feetOffset) : id(id), layer(0), posInWorld(posInWorld), mustBlur(false) {
+Sprite::Sprite(Texture& texture, vec2f posInWorld, game_id id, float feetOffset) : id(id), layer(0), posInWorld(posInWorld), mustBlur(false) {
 	this->setTexture(texture);
 	loaded = texture.isLoaded();
 	textureRect = sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y);
 	this->feetOffset = textureRect.height * feetOffset;
 }
 
-id_t Sprite::getId() {
+game_id Sprite::getId() {
 	return id;
 }
 
@@ -87,7 +87,7 @@ void Sprite::move(vec2f delta) {
 	this->posInWorld += delta;
 }
 
-AnimatedSprite::AnimatedSprite(Texture& texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, id_t id, float feetOffset) : animationDuration(duration), Sprite(texture, posInWorld, id, feetOffset) {
+AnimatedSprite::AnimatedSprite(Texture& texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset) : animationDuration(duration), Sprite(texture, posInWorld, id, feetOffset) {
 	setTextureRect(rect);
 	textureRect = rect;
 	animationCounter = sf::Time::Zero;
@@ -96,7 +96,7 @@ AnimatedSprite::AnimatedSprite(Texture& texture, sf::IntRect rect, sf::Time dura
 
 void AnimatedSprite::animateStep() {
 	sf::IntRect rect = getTextureRect();
-	setTextureRect(sf::IntRect((unsigned int(rect.left + rect.width*2) > getTexture()->getSize().x) ? 0 : rect.left + rect.width, rect.top, rect.width, rect.height));
+	setTextureRect(sf::IntRect(((unsigned int)(rect.left + rect.width*2) > getTexture()->getSize().x) ? 0 : rect.left + rect.width, rect.top, rect.width, rect.height));
 }
 
 void AnimatedSprite::setAnimation(Game::Animation a) {
@@ -113,18 +113,18 @@ void AnimatedSprite::animate(sf::Time elapsed) {
 	}
 }
 
-RepeatedSprite::RepeatedSprite(Texture& texture, int w, int h, vec2f posInWorld, id_t id, float feetOffset) : Sprite(texture, posInWorld, id, feetOffset) {
+RepeatedSprite::RepeatedSprite(Texture& texture, int w, int h, vec2f posInWorld, game_id id, float feetOffset) : Sprite(texture, posInWorld, id, feetOffset) {
 	texture.setRepeated(true);
 	setTextureRect(sf::IntRect(0, 0, w, h));
 }
 
-AdditionalSprite::AdditionalSprite(Texture& texture, sf::IntRect rect, sf::Time duration, id_t id) : AnimatedSprite(texture, rect, duration, vec2f(0,0), id, 1) {}
+AdditionalSprite::AdditionalSprite(Texture& texture, sf::IntRect rect, sf::Time duration, game_id id) : AnimatedSprite(texture, rect, duration, vec2f(0,0), id, 1) {}
 
 void AdditionalSprite::draw(sf::RenderTarget & window) {}
 
 void AdditionalSprite::animate(sf::Time elapsed) {}
 
-SpriteSet::SpriteSet(Texture& texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, id_t id, float feetOffset) : AnimatedSprite(texture, rect, duration, posInWorld, id, feetOffset) {}
+SpriteSet::SpriteSet(Texture& texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset) : AnimatedSprite(texture, rect, duration, posInWorld, id, feetOffset) {}
 
 void SpriteSet::addAdditionalSprite(AdditionalSprite& spr) {
 	sprites.push_back(&spr);
@@ -181,7 +181,7 @@ void SpriteSet::blur(bool b) {
 	}
 }
 
-TreeSprite::TreeSprite(Texture& trunk, Texture& top, int offset, vec2f posInWorld, id_t id, float feetOffset) : Sprite(trunk, posInWorld, id, feetOffset), offset(offset) {
+TreeSprite::TreeSprite(Texture& trunk, Texture& top, int offset, vec2f posInWorld, game_id id, float feetOffset) : Sprite(trunk, posInWorld, id, feetOffset), offset(offset) {
 	leaves.setTexture(top);
 }
 

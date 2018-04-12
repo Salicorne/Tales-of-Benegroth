@@ -15,13 +15,13 @@ Actor * GameManager::getPlayer() {
 	return player;
 }
 
-Actor* GameManager::addActor(id_t sprite, vec2f pos, float speed, id_t id) {
+Actor* GameManager::addActor(game_id sprite, vec2f pos, float speed, game_id id) {
 	Actor* a = new Actor(static_cast<SpriteSet*>(&mgr.getSprite(sprite)), pos, speed, id);
 	actors.push_back(a);
 	return a;
 }
 
-NPC * GameManager::addNPC(id_t sprite, vec2f pos, float speed, id_t id) {
+NPC * GameManager::addNPC(game_id sprite, vec2f pos, float speed, game_id id) {
 	NPC* a = new NPC(static_cast<SpriteSet*>(&mgr.getSprite(sprite)), pos, speed, id);
 	actors.push_back(a);
 	return a;
@@ -55,13 +55,13 @@ void GameManager::playActors(sf::Time elapsed) {
 	}
 }
 
-void AssetCreator::createTreeSprite(MemoryManager& mgr, id_t trunk, id_t leaves, int minOffset, int maxOffset, vec2f posInWorld, id_t id, float feetOffset) {
+void AssetCreator::createTreeSprite(MemoryManager& mgr, game_id trunk, game_id leaves, int minOffset, int maxOffset, vec2f posInWorld, game_id id, float feetOffset) {
 	mgr.addTreeSprite(trunk, leaves, minOffset + (rand() % (maxOffset - minOffset + 1)), posInWorld, id, feetOffset);
 }
 
-void AssetCreator::createSpriteSet(MemoryManager& mgr, id_t baseSprite, std::vector<std::pair<id_t, sf::Color>> additions, sf::IntRect rect, vec2f posInWorld, sf::Time animationTime, id_t id, float feetOffset) {
+void AssetCreator::createSpriteSet(MemoryManager& mgr, game_id baseSprite, std::vector<std::pair<game_id, sf::Color>> additions, sf::IntRect rect, vec2f posInWorld, sf::Time animationTime, game_id id, float feetOffset) {
 	for (auto& i : additions) {
-		id_t uid = mgr.getFreeSpriteId();
+		game_id uid = mgr.getFreeSpriteId();
 		mgr.addAdditionalSprite(i.first, rect, animationTime, uid);
 		mgr.getSprite(uid).setColor(i.second);
 		i.first = uid;

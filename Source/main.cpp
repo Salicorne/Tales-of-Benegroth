@@ -29,6 +29,7 @@ void action(sf::RenderWindow& window, MemoryManager& mgr, GameManager& gmgr) {
 
 int main()
 {
+	std::cout << "Tales of Benegroth" << std::endl;
 	Game::Window::Width = 711;
 	Game::Window::Height = 400;
 	Game::Window::widthScrollLimit = 0.1f;
@@ -52,8 +53,9 @@ int main()
 	for (unsigned int i = 0; i< sf::Joystick::Count; ++i)
 	{
 		if (sf::Joystick::isConnected(i))
-			std::cout << "Joystick " << i << " is connected!" << std::endl;
+			std::cout << "Joystick " << i << " is connected !" << std::endl;
 	}
+	int joystick = 0;
 
 	mgr.addTexture("Assets/Image.bmp", 100);
 	mgr.addTexture("Assets/grass_2.png", 101);
@@ -81,9 +83,12 @@ int main()
 	mgr.addRepeatedSprite(101, 5000, 5000, vec2f(-1000, -1000), 203);
 	mgr.getSprite(203).setLayer(-1);
 
-	std::thread renderThread(render, std::ref(window), std::ref(mgr));
+	//std::thread renderThread(render, std::ref(window), std::ref(mgr));
 	std::thread animateThread(animate, std::ref(window), std::ref(mgr), std::ref(gmgr));
 	std::thread actionThread(action, std::ref(window), std::ref(mgr), std::ref(gmgr));
+
+	//sf::Thread renderThread(std::bind(render, std::ref(window), std::ref(mgr)));
+	//renderThread.launch();
 
 	sf::Clock clock;
 	vec2f playerMovement(0, 0);
@@ -106,16 +111,16 @@ int main()
 
 		sf::Joystick::update();
 
-		if (sf::Joystick::isConnected(2)) {
-			playerMovement.x = sf::Joystick::getAxisPosition(2, sf::Joystick::Axis::X)/100;
-			playerMovement.y = sf::Joystick::getAxisPosition(2, sf::Joystick::Axis::Y)/100;
-			/*for (int i = 0; i < sf::Joystick::getButtonCount(2); i++) {
-				std::cout << sf::Joystick::isButtonPressed(2, i) << " - ";
-			}
-			std::cout << std::endl;*/
-			for (unsigned int i = 0; i < sf::Joystick::getButtonCount(2); i++) {
+		if (sf::Joystick::isConnected(joystick)) {
+			playerMovement.x = sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::X)/100;
+			playerMovement.y = sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::Y)/100;
+			/*for (int i = 0; i < sf::Joystick::getButtonCount(joystick); i++) {
+				std::cout << sf::Joystick::isButtonPressed(joystick, i) << " - ";
+			}*/
+			//std::cout << std::endl;
+			/*for (unsigned int i = 0; i < sf::Joystick::getButtonCount(2); i++) {
 				if (sf::Joystick::isButtonPressed(2, i)) { std::cout << "Button " << i << " pressed !" << std::endl; }
-			}
+			}*/
 		}
 		else {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) { playerMovement.y--; }
@@ -127,12 +132,18 @@ int main()
 
 		gmgr.movePlayer(playerMovement, elapsed);
 
+		window.clear();
+		mgr.draw(window);
+		window.display();
+
 		sf::sleep(sf::milliseconds(10));
 	}
 
-	renderThread.join();
+	///renderThread.join();
 	animateThread.join();
 	actionThread.join();
+
+	//renderThread.wait();
 
 	return 0;
 }
