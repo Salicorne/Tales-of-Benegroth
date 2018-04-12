@@ -1,0 +1,1 @@
+To patch a LPC human asset, add it four more Idle animations, with last 4/9 idled down by 1 px
