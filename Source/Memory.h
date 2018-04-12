@@ -10,10 +10,12 @@ class MemoryManager {
 		vec2f windowPosition;
 		std::mutex spritesMutex;
 		std::mutex texturesMutex;
+		id_t counter;
 
 	public:
 		MemoryManager();
 		~MemoryManager();
+		id_t getFreeSpriteId();
 		void addTexture(std::string path, id_t id);
 		void addSprite(id_t texture, vec2f posInWorld, id_t id, float feetOffset = 0);
 		void addTreeSprite(id_t trunk, id_t leaves, int offset, vec2f posInWorld, id_t id, float feetOffset = 0);

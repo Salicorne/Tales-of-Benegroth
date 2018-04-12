@@ -19,6 +19,11 @@ MemoryManager::~MemoryManager() {
 	texturesMutex.unlock();
 }
 
+id_t MemoryManager::getFreeSpriteId() {
+	counter++;
+	return 10000 + counter;
+}
+
 void MemoryManager::addTexture(std::string path, id_t id) {
 	texturesMutex.lock();
 	this->textures.push_back(new Texture(path, id));

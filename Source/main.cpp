@@ -29,14 +29,23 @@ void action(sf::RenderWindow& window, MemoryManager& mgr, GameManager& gmgr) {
 
 int main()
 {
+	Game::Window::Width = 711;
 	Game::Window::Height = 400;
-	Game::Window::Width = Game::Window::Height*16/9;
 	Game::Window::widthScrollLimit = 0.1f;
 	Game::Window::heightScrollLimit = 0.1f;
 
-	std::cout << "Creating a window of " << Game::Window::Width << "x" << Game::Window::Height << std::endl;
+	srand(time(NULL));
+
 	sf::RenderWindow window(sf::VideoMode(Game::Window::Width, Game::Window::Height), "SFML works!");
+	//sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen);
 	window.setActive(false);
+	window.setKeyRepeatEnabled(false);
+	window.setMouseCursorVisible(false);
+	
+
+	Game::Window::Width = window.getSize().x;
+	Game::Window::Height = window.getSize().y;
+
 	MemoryManager mgr;
 	GameManager gmgr(mgr);
 
@@ -52,34 +61,24 @@ int main()
 	mgr.addTexture("Assets/pants_patched.png", 103);
 	mgr.addTexture("Assets/gloves_patched.png", 104);
 	mgr.addTexture("Assets/torso_patched.png", 105);
+	mgr.addTexture("Assets/male_hair_patched.png", 108);
 	mgr.addTexture("Assets/treetrunk.png", 106);
 	mgr.addTexture("Assets/treetop.png", 107);
 
-	mgr.addTreeSprite(106, 107, 50, vec2f(150, 200), 250, 0.3f);
+	for (int i = 0; i < 10; i++) {
+		AssetCreator::createTreeSprite(mgr, 106, 107, 30, 65, vec2f(i*100, -300), 250 + i, 0.2);
+	}
 
 	// player
-	mgr.addAdditionalSprite(103, sf::IntRect(0, 0, 64, 64), sf::milliseconds(100), 206);
-	mgr.addAdditionalSprite(104, sf::IntRect(0, 0, 64, 64), sf::milliseconds(100), 207);
-	mgr.addAdditionalSprite(105, sf::IntRect(0, 0, 64, 64), sf::milliseconds(100), 208);
-	SpriteSet* s = mgr.addSpriteSet(102, sf::IntRect(0, 0, 64, 64), sf::milliseconds(100), vec2f(100, 100), 205);
-	s->addAdditionalSprite((AdditionalSprite&)mgr.getSprite(206));
-	s->addAdditionalSprite((AdditionalSprite&)mgr.getSprite(207));
-	s->addAdditionalSprite((AdditionalSprite&)mgr.getSprite(208));
+	AssetCreator::createSpriteSet(mgr, 102, { { 103, sf::Color::White },{ 104, sf::Color::White },{ 105, sf::Color::White },{ 108, sf::Color::Cyan } }, sf::IntRect(0, 0, 64, 64), vec2f(100, 300), sf::milliseconds(100), 270);
+	gmgr.setPlayer(gmgr.addActor(270, vec2f(10, 100), 3.f, 300));
 
 	// npc
-	mgr.addAdditionalSprite(103, sf::IntRect(0, 0, 64, 64), sf::milliseconds(100), 210);
-	mgr.addAdditionalSprite(104, sf::IntRect(0, 0, 64, 64), sf::milliseconds(100), 211);
-	mgr.addAdditionalSprite(105, sf::IntRect(0, 0, 64, 64), sf::milliseconds(100), 212);
-	SpriteSet* npc = mgr.addSpriteSet(102, sf::IntRect(0, 0, 64, 64), sf::milliseconds(100), vec2f(0, 0), 213);
-	npc->addAdditionalSprite((AdditionalSprite&)mgr.getSprite(210));
-	npc->addAdditionalSprite((AdditionalSprite&)mgr.getSprite(211));
-	npc->addAdditionalSprite((AdditionalSprite&)mgr.getSprite(212));
+	AssetCreator::createSpriteSet(mgr, 102, { { 103, sf::Color::Red },{ 104, sf::Color::White },{ 105, sf::Color::White },{ 108, sf::Color::Green } }, sf::IntRect(0, 0, 64, 64), vec2f(100, 300), sf::milliseconds(100), 213);
 	gmgr.addNPC(213, vec2f(300, 350), 0.5, 301);
 
 
-	gmgr.setPlayer(gmgr.addActor(205, vec2f(10, 100), 1.2f, 300));
-
-	mgr.addRepeatedSprite(101, 500, 500, vec2f(-100, -100), 203);
+	mgr.addRepeatedSprite(101, 5000, 5000, vec2f(-1000, -1000), 203);
 	mgr.getSprite(203).setLayer(-1);
 
 	std::thread renderThread(render, std::ref(window), std::ref(mgr));
@@ -98,11 +97,8 @@ int main()
 				window.close();
 
 			if (event.type == sf::Event::KeyPressed) {
-				if (event.key.code == sf::Keyboard::P) {
-					npc->blur(true);
-				}
-				if (event.key.code == sf::Keyboard::O) {
-					npc->blur(false);
+				if (event.key.code == sf::Keyboard::Escape) {
+					window.close();
 				}
 			}
 		}

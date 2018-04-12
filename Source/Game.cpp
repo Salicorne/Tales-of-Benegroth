@@ -45,8 +45,29 @@ void GameManager::movePlayer(vec2f delta, sf::Time elapsed) {
 	}
 }
 
+void GameManager::drawMessage(std::string message) {
+
+}
+
 void GameManager::playActors(sf::Time elapsed) {
 	for (Actor* a : actors) {
 		a->action(elapsed);
+	}
+}
+
+void AssetCreator::createTreeSprite(MemoryManager& mgr, id_t trunk, id_t leaves, int minOffset, int maxOffset, vec2f posInWorld, id_t id, float feetOffset) {
+	mgr.addTreeSprite(trunk, leaves, minOffset + (rand() % (maxOffset - minOffset + 1)), posInWorld, id, feetOffset);
+}
+
+void AssetCreator::createSpriteSet(MemoryManager& mgr, id_t baseSprite, std::vector<std::pair<id_t, sf::Color>> additions, sf::IntRect rect, vec2f posInWorld, sf::Time animationTime, id_t id, float feetOffset) {
+	for (auto& i : additions) {
+		id_t uid = mgr.getFreeSpriteId();
+		mgr.addAdditionalSprite(i.first, rect, animationTime, uid);
+		mgr.getSprite(uid).setColor(i.second);
+		i.first = uid;
+	}
+	SpriteSet* s = mgr.addSpriteSet(baseSprite, rect, animationTime, posInWorld, id, feetOffset);
+	for (const auto i : additions) {
+		s->addAdditionalSprite(static_cast<AdditionalSprite&>(mgr.getSprite(i.first)));
 	}
 }
