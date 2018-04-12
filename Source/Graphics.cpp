@@ -26,7 +26,7 @@ bool Texture::isLoaded() {
 	return loaded;
 }
 
-Sprite::Sprite(Texture& texture, vec2f posInWorld, id_t id, float feetOffset) : id(id), layer(0), posInWorld(posInWorld) {
+Sprite::Sprite(Texture& texture, vec2f posInWorld, id_t id, float feetOffset) : id(id), layer(0), posInWorld(posInWorld), mustBlur(false) {
 	this->setTexture(texture);
 	loaded = texture.isLoaded();
 	textureRect = sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y);
@@ -69,8 +69,14 @@ vec2f Sprite::getPosInWorld() const {
 	return posInWorld;
 }
 
+void Sprite::blurs(bool b) { mustBlur = b; }
+
+bool Sprite::blurs() {
+	return mustBlur;
+}
+
 void Sprite::blur(bool b) {
-	setColor(sf::Color(255, 255, 255, 255*b?0.5:1));
+	setColor(sf::Color(255, 255, 255, 255*(b?0.5:1)));
 }
 
 void Sprite::setPosInWorld(vec2f pos) {
@@ -168,6 +174,13 @@ void SpriteSet::animate(sf::Time elapsed) {
 	}
 }
 
+void SpriteSet::blur(bool b) {
+	Sprite::blur(b);
+	for (AdditionalSprite* spr : sprites) {
+		spr->blur(b);
+	}
+}
+
 TreeSprite::TreeSprite(Texture& trunk, Texture& top, int offset, vec2f posInWorld, id_t id, float feetOffset) : Sprite(trunk, posInWorld, id, feetOffset), offset(offset) {
 	leaves.setTexture(top);
 }
@@ -176,5 +189,10 @@ void TreeSprite::draw(sf::RenderTarget& window) {
 	window.draw(*this);
 	leaves.setPosition(getPosition() - vec2f(0, offset));
 	window.draw(leaves);
+}
+
+void TreeSprite::blur(bool b) {
+	Sprite::blur(b);
+	leaves.setColor(sf::Color(255, 255, 255, 255 * (b ? 0.5 : 1)));
 }
 

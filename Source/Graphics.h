@@ -21,6 +21,7 @@ class Sprite : public sf::Sprite {
 		vec2f posInWorld;
 		sf::IntRect textureRect;
 		int feetOffset;
+		bool mustBlur;
 
 	public:
 		Sprite(Texture& texture, vec2f posInWorld, id_t id, float feetOffset);
@@ -31,8 +32,10 @@ class Sprite : public sf::Sprite {
 		vec2f getFeetPos() const;
 		vec2f getHeadPos() const;
 		vec2f getPosInWorld() const;
-		virtual void blur(bool b);
+		void blurs(bool b);
+		bool blurs();
 
+		virtual void blur(bool b);
 		virtual void draw(sf::RenderTarget& window);
 		virtual void setPosInWorld(vec2f pos);
 		virtual void move(vec2f delta);
@@ -49,6 +52,7 @@ class TreeSprite : public Sprite {
 	public:
 		TreeSprite(Texture& trunk, Texture& top, int offset, vec2f posInWorld, id_t id, float feetOffset);
 		virtual void draw(sf::RenderTarget& window);
+		virtual void blur(bool b);
 };
 
 class RepeatedSprite : public Sprite {
@@ -87,4 +91,5 @@ class SpriteSet : public AnimatedSprite {
 		virtual void move(vec2f delta);
 		virtual void setPosInWorld(vec2f pos);
 		virtual void animate(sf::Time elapsed);
+		virtual void blur(bool b);
 };

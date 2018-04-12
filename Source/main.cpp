@@ -9,10 +9,11 @@ void render(sf::RenderWindow& window, MemoryManager& mgr) {
 	}
 }
 
-void animate(sf::RenderWindow& window, MemoryManager& mgr) {
+void animate(sf::RenderWindow& window, MemoryManager& mgr, GameManager& gmgr) {
 	sf::Clock clock;
 	while (window.isOpen()) {
 		mgr.animateSprites(clock.restart());
+		mgr.updateBlur(gmgr.getPlayer()->getSpriteSet()->getFeetPos());
 		sf::sleep(sf::milliseconds(50));
 	}
 }
@@ -54,7 +55,7 @@ int main()
 	mgr.addTexture("Assets/treetrunk.png", 106);
 	mgr.addTexture("Assets/treetop.png", 107);
 
-	mgr.addTreeSprite(106, 107, 50, vec2f(150, 200), 250, 0.3);
+	mgr.addTreeSprite(106, 107, 50, vec2f(150, 200), 250, 0.3f);
 
 	// player
 	mgr.addAdditionalSprite(103, sf::IntRect(0, 0, 64, 64), sf::milliseconds(100), 206);
@@ -82,7 +83,7 @@ int main()
 	mgr.getSprite(203).setLayer(-1);
 
 	std::thread renderThread(render, std::ref(window), std::ref(mgr));
-	std::thread animateThread(animate, std::ref(window), std::ref(mgr));
+	std::thread animateThread(animate, std::ref(window), std::ref(mgr), std::ref(gmgr));
 	std::thread actionThread(action, std::ref(window), std::ref(mgr), std::ref(gmgr));
 
 	sf::Clock clock;
@@ -116,7 +117,7 @@ int main()
 				std::cout << sf::Joystick::isButtonPressed(2, i) << " - ";
 			}
 			std::cout << std::endl;*/
-			for (int i = 0; i < sf::Joystick::getButtonCount(2); i++) {
+			for (unsigned int i = 0; i < sf::Joystick::getButtonCount(2); i++) {
 				if (sf::Joystick::isButtonPressed(2, i)) { std::cout << "Button " << i << " pressed !" << std::endl; }
 			}
 		}

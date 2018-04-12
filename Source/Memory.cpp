@@ -33,7 +33,9 @@ void MemoryManager::addSprite(id_t texture, vec2f posInWorld, id_t id, float fee
 
 void MemoryManager::addTreeSprite(id_t trunk, id_t leaves, int offset, vec2f posInWorld, id_t id, float feetOffset) {
 	spritesMutex.lock();
-	sprites.push_back(new TreeSprite(getTexture(trunk), getTexture(leaves), offset, posInWorld, id, feetOffset));
+	TreeSprite* tree = new TreeSprite(getTexture(trunk), getTexture(leaves), offset, posInWorld, id, feetOffset);
+	tree->blurs(true);
+	sprites.push_back(tree);
 	spritesMutex.unlock();
 }
 
@@ -85,6 +87,14 @@ Sprite& MemoryManager::getSprite(id_t id) {
 
 vec2f MemoryManager::getWindowPos() {
 	return windowPosition;
+}
+
+void MemoryManager::updateBlur(vec2f playerPos) {
+	spritesMutex.lock();
+	for (Sprite* spr : sprites) {
+		if (spr->blurs()) { spr->blur(spr->getGlobalBounds().contains(playerPos - windowPosition)); }
+	}
+	spritesMutex.unlock();
 }
 
 void MemoryManager::moveWindow(vec2f delta) {
