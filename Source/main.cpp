@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "Scene.h"
 
 void render(sf::RenderWindow& window, MemoryManager& mgr) {
 	while (window.isOpen()) {
@@ -42,7 +42,6 @@ int main()
 	window.setActive(false);
 	window.setKeyRepeatEnabled(false);
 	window.setMouseCursorVisible(false);
-	
 
 	Game::Window::Width = window.getSize().x;
 	Game::Window::Height = window.getSize().y;
@@ -50,38 +49,19 @@ int main()
 	MemoryManager mgr;
 	GameManager gmgr(mgr);
 
+	int joystick = -1;
 	for (unsigned int i = 0; i< sf::Joystick::Count; ++i)
 	{
-		if (sf::Joystick::isConnected(i))
+		if (sf::Joystick::isConnected(i)) {
 			std::cout << "Joystick " << i << " is connected !" << std::endl;
-	}
-	int joystick = 0;
-
-	mgr.addTexture("Assets/Image.bmp", 100);
-	mgr.addTexture("Assets/grass_2.png", 101);
-	mgr.addTexture("Assets/male_patched.png", 102);
-	mgr.addTexture("Assets/pants_patched.png", 103);
-	mgr.addTexture("Assets/gloves_patched.png", 104);
-	mgr.addTexture("Assets/torso_patched.png", 105);
-	mgr.addTexture("Assets/male_hair_patched.png", 108);
-	mgr.addTexture("Assets/treetrunk.png", 106);
-	mgr.addTexture("Assets/treetop.png", 107);
-
-	for (int i = 0; i < 10; i++) {
-		AssetCreator::createTreeSprite(mgr, 106, 107, 30, 65, vec2f(i*100, -300), 250 + i, 0.2);
+			joystick = i;
+		}
 	}
 
-	// player
-	AssetCreator::createSpriteSet(mgr, 102, { { 103, sf::Color::White },{ 104, sf::Color::White },{ 105, sf::Color::White },{ 108, sf::Color::Cyan } }, sf::IntRect(0, 0, 64, 64), vec2f(100, 300), sf::milliseconds(100), 270);
-	gmgr.setPlayer(gmgr.addActor(270, vec2f(10, 100), 3.f, 300));
-
-	// npc
-	AssetCreator::createSpriteSet(mgr, 102, { { 103, sf::Color::Red },{ 104, sf::Color::White },{ 105, sf::Color::White },{ 108, sf::Color::Green } }, sf::IntRect(0, 0, 64, 64), vec2f(100, 300), sf::milliseconds(100), 213);
-	gmgr.addNPC(213, vec2f(300, 350), 0.5, 301);
-
-
-	mgr.addRepeatedSprite(101, 5000, 5000, vec2f(-1000, -1000), 203);
-	mgr.getSprite(203).setLayer(-1);
+	if(!Scene::loadScene("save.dat", mgr, gmgr)) {
+		std::cerr << "Error loading main scene, aborting. " << std::endl;
+		return -1;
+	}
 
 	//std::thread renderThread(render, std::ref(window), std::ref(mgr));
 	std::thread animateThread(animate, std::ref(window), std::ref(mgr), std::ref(gmgr));
@@ -111,7 +91,7 @@ int main()
 
 		sf::Joystick::update();
 
-		if (sf::Joystick::isConnected(joystick)) {
+		if (joystick != -1 && sf::Joystick::isConnected(joystick)) {
 			playerMovement.x = sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::X)/100;
 			playerMovement.y = sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::Y)/100;
 			/*for (int i = 0; i < sf::Joystick::getButtonCount(joystick); i++) {

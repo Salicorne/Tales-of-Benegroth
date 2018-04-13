@@ -5,6 +5,7 @@
 #include <time.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <algorithm>
 #include <functional>
@@ -34,6 +35,19 @@ namespace Game {
 		South, 
 		East, 
 		West
+	};
+
+	enum FileOp {
+		Texture = 0, 
+		Sprite = 1, 
+		RepeatedSprite = 2, 
+		AnimatedSprite = 3, 
+		TreeSprite = 4, 
+		SpriteSet = 5, 
+		SetLayer = 21, 
+		SetBlur = 22, 
+		SetPlayer = 23, 
+		AddNPC = 24
 	};
 
 	namespace Window {

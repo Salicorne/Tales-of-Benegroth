@@ -101,7 +101,7 @@ void AnimatedSprite::animateStep() {
 
 void AnimatedSprite::setAnimation(Game::Animation a) {
 	sf::IntRect rect = getTextureRect();
-	setTextureRect(sf::IntRect(rect.left, rect.height * a, rect.width, rect.height));
+	setTextureRect(sf::IntRect(rect.left, (rect.height * a) % getTexture()->getSize().y, rect.width, rect.height));
 }
 
 void AnimatedSprite::animate(sf::Time elapsed) {

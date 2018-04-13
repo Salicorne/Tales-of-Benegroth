@@ -27,6 +27,7 @@ class MemoryManager {
 		Sprite& getSprite(game_id id);
 		vec2f getWindowPos();
 		void updateBlur(vec2f playerPos);
+		void dropSprites();
 
 		void moveWindow(vec2f delta);
 		void animateSprites(sf::Time elapsed);

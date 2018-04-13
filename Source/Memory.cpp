@@ -102,6 +102,15 @@ void MemoryManager::updateBlur(vec2f playerPos) {
 	spritesMutex.unlock();
 }
 
+void MemoryManager::dropSprites() {
+	spritesMutex.lock();
+	for (Sprite* spr : sprites) {
+		delete spr;
+	}
+	sprites.clear();
+	spritesMutex.unlock();
+}
+
 void MemoryManager::moveWindow(vec2f delta) {
 	windowPosition += delta;
 }

@@ -59,14 +59,14 @@ void AssetCreator::createTreeSprite(MemoryManager& mgr, game_id trunk, game_id l
 	mgr.addTreeSprite(trunk, leaves, minOffset + (rand() % (maxOffset - minOffset + 1)), posInWorld, id, feetOffset);
 }
 
-void AssetCreator::createSpriteSet(MemoryManager& mgr, game_id baseSprite, std::vector<std::pair<game_id, sf::Color>> additions, sf::IntRect rect, vec2f posInWorld, sf::Time animationTime, game_id id, float feetOffset) {
+void AssetCreator::createSpriteSet(MemoryManager& mgr, game_id baseTexture, std::vector<std::pair<game_id, sf::Color>> additions, sf::IntRect rect, vec2f posInWorld, sf::Time animationTime, game_id id, float feetOffset) {
 	for (auto& i : additions) {
 		game_id uid = mgr.getFreeSpriteId();
 		mgr.addAdditionalSprite(i.first, rect, animationTime, uid);
 		mgr.getSprite(uid).setColor(i.second);
 		i.first = uid;
 	}
-	SpriteSet* s = mgr.addSpriteSet(baseSprite, rect, animationTime, posInWorld, id, feetOffset);
+	SpriteSet* s = mgr.addSpriteSet(baseTexture, rect, animationTime, posInWorld, id, feetOffset);
 	for (const auto i : additions) {
 		s->addAdditionalSprite(static_cast<AdditionalSprite&>(mgr.getSprite(i.first)));
 	}
