@@ -1,8 +1,23 @@
 #include "Game.h"
 
 
-GameManager::GameManager(MemoryManager& mgr) : mgr(mgr) {
+GameManager::GameManager(MemoryManager& mgr, sfg::SFGUI& gui, sf::Window& window) : mgr(mgr), gui(gui), window(window) {
 	player = nullptr;
+
+	// Init GUI
+	message = sfg::Label::Create( L"label" );
+	closeMessageButton = sfg::Button::Create( "Fermer" );
+	messageBox = sfg::Box::Create( sfg::Box::Orientation::VERTICAL, 5.0f );
+	messageBox->Pack( message );
+	messageBox->Pack( closeMessageButton, false);
+
+	gwindow = sfg::Window::Create();
+	gwindow->SetTitle( "" );
+	gwindow->Add( messageBox );
+	gwindow->Show(false);
+	closeMessageButton->GetSignal( sfg::Widget::OnLeftClick ).Connect( [this] {clearWindow();});
+	desktop.Add( gwindow );
+	desktop.LoadThemeFromFile("Assets/example.theme");
 }
 
 GameManager::~GameManager() {
@@ -31,6 +46,14 @@ void GameManager::setPlayer(Actor * a) {
 	player = a;
 }
 
+void GameManager::clearWindow() {
+	this->gwindow->Show(false);
+}
+
+sfg::Desktop& GameManager::getDesktop() {
+	return desktop;
+}
+
 void GameManager::movePlayer(vec2f delta, sf::Time elapsed) {
 	if (player != nullptr) {
 		player->move(delta, elapsed);
@@ -45,14 +68,21 @@ void GameManager::movePlayer(vec2f delta, sf::Time elapsed) {
 	}
 }
 
-void GameManager::drawMessage(std::string message) {
-
+void GameManager::showMessage(std::string sender, std::string message) {
+	this->message->SetText(message);
+	this->gwindow->SetPosition(vec2f(0, window.getSize().y/2));
+	this->gwindow->SetTitle(sender);
+	this->gwindow->Show(true);
 }
 
 void GameManager::playActors(sf::Time elapsed) {
 	for (Actor* a : actors) {
 		a->action(elapsed);
 	}
+}
+
+void GameManager::drawGUI(sf::RenderWindow& window) {
+	gui.Display(window);
 }
 
 void AssetCreator::createTreeSprite(MemoryManager& mgr, game_id trunk, game_id leaves, int minOffset, int maxOffset, vec2f posInWorld, game_id id, float feetOffset) {
