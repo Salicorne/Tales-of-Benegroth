@@ -9,28 +9,18 @@ class GameManager {
 		std::vector<Actor*> actors;
 		Actor* player;
 		sf::Window& window;
-		sfg::SFGUI& gui;
-		sfg::Label::Ptr message;
-		sfg::Button::Ptr closeMessageButton;
-		sfg::Box::Ptr messageBox;
-		sfg::Window::Ptr gwindow;
-		sfg::Desktop desktop;
 
 	public:
-		GameManager(MemoryManager& mgr, sfg::SFGUI& gui, sf::Window& window);
+		GameManager(MemoryManager& mgr, sf::Window& window);
 		~GameManager();
 		Actor* getPlayer();
 		Actor* addActor(game_id sprite, vec2f pos, float speed, game_id id);
 		NPC* addNPC(game_id sprite, vec2f pos, float speed, game_id id);
 		void setPlayer(Actor* a);
-		void clearWindow();
-		sfg::Desktop& getDesktop();
 
 		void movePlayer(vec2f delta, sf::Time elapsed);
-		void showMessage(std::string sender, std::string message);
 
 		void playActors(sf::Time elapsed);
-		void drawGUI(sf::RenderWindow& window);
 };
 
 class AssetCreator {

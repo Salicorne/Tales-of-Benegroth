@@ -2,6 +2,11 @@ Window {
 	BackgroundColor: #dd5533ff;
 }
 
+* {
+	FontName: Assets/Onciale PhF01.ttf;
+	FontSize: 50;
+}
+
 /* Matches all Labels who are direct children of the table */
 /* This is NOT equivalent to "Window Label" */
 Window > * > * > Label {

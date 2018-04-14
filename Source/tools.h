@@ -19,6 +19,8 @@ float norm(vec2f vec);
 vec2f normalize(vec2f vec);
 
 namespace Game {
+	extern int joystick;
+	
 	enum Animation {
 		IdleN = 0, 
 		IdleW = 1, 

@@ -1,4 +1,4 @@
-#include "Scene.h"
+#include "Screen.h"
 
 
 void render(sf::RenderWindow& window, MemoryManager& mgr) {
@@ -30,12 +30,16 @@ void action(sf::RenderWindow& window, MemoryManager& mgr, GameManager& gmgr) {
 
 int main()
 {
-	sfg::SFGUI gui;
 	std::cout << "Tales of Benegroth" << std::endl;
+	sfg::SFGUI gui;
 	Game::Window::Width = 711;
 	Game::Window::Height = 400;
 	Game::Window::widthScrollLimit = 0.1f;
 	Game::Window::heightScrollLimit = 0.1f;
+
+	sf::Font font;
+    if (!font.loadFromFile("Assets/Onciale PhF01.ttf"))
+        std::cout << "Could not load font." << std::endl;
 
 	srand(time(NULL));
 
@@ -49,16 +53,23 @@ int main()
 	Game::Window::Height = window.getSize().y;
 
 	MemoryManager mgr;
-	GameManager gmgr(mgr, gui, window);
+	GameManager gmgr(mgr, window);
 
-	int joystick = -1;
+	Game::joystick = -1;
 	for (unsigned int i = 0; i< sf::Joystick::Count; ++i)
 	{
 		if (sf::Joystick::isConnected(i)) {
 			std::cout << "Joystick " << i << " is connected !" << std::endl;
-			joystick = i;
+			Game::joystick = i;
 		}
 	}
+
+	std::vector<AbstractScreen*> screens;
+	MenuScreen menuScreen(gui);
+	screens.push_back(&menuScreen);
+	GameScreen gameScreen(gui);
+	screens.push_back(&gameScreen);
+	int screen = 0;
 
 	if(!Scene::loadScene("save.dat", mgr, gmgr)) {
 		std::cerr << "Error loading main scene, aborting. " << std::endl;
@@ -74,7 +85,11 @@ int main()
 
 	sf::Clock clock;
 	vec2f playerMovement(0, 0);
-	while (window.isOpen())
+	while(screen >= 0) {
+		screens[screen]->setUp();
+		screen = screens[screen]->run(mgr, gmgr, window);
+	}
+	/*while (window.isOpen())
 	{
 		sf::Event event;
 		sf::Time elapsed = clock.restart();
@@ -101,16 +116,9 @@ int main()
 
 		sf::Joystick::update();
 
-		if (joystick != -1 && sf::Joystick::isConnected(joystick)) {
-			playerMovement.x = sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::X)/100;
-			playerMovement.y = sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::Y)/100;
-			/*for (int i = 0; i < sf::Joystick::getButtonCount(joystick); i++) {
-				std::cout << sf::Joystick::isButtonPressed(joystick, i) << " - ";
-			}*/
-			//std::cout << std::endl;
-			/*for (unsigned int i = 0; i < sf::Joystick::getButtonCount(2); i++) {
-				if (sf::Joystick::isButtonPressed(2, i)) { std::cout << "Button " << i << " pressed !" << std::endl; }
-			}*/
+		if (Game::joystick != -1 && sf::Joystick::isConnected(Game::joystick)) {
+			playerMovement.x = sf::Joystick::getAxisPosition(Game::joystick, sf::Joystick::Axis::X)/100;
+			playerMovement.y = sf::Joystick::getAxisPosition(Game::joystick, sf::Joystick::Axis::Y)/100;
 		}
 		else {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) { playerMovement.y--; }
@@ -128,8 +136,9 @@ int main()
 		window.display();
 
 		sf::sleep(sf::milliseconds(10));
-	}
+	}*/
 
+	window.close();
 	///renderThread.join();
 	animateThread.join();
 	actionThread.join();
