@@ -26,6 +26,10 @@ if(SFML_FOUND)
   target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
 endif()
 
+find_package(SFGUI REQUIRED)
+include_directories(/usr/local/lib)
+target_link_libraries(${EXECUTABLE_NAME} sfgui ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+
 
 # Install target
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)

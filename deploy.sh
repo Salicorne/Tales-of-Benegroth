@@ -1,6 +1,6 @@
 #!/bin/bash
 echo " > cleaning..."
-touch app && rm app
+touch app && rm app && rm -rf Build/*
 cd ./Build
 echo " > executing CMake..."
 cmake ..
