@@ -13,6 +13,7 @@ int Game::Window::Height;
 float Game::Window::widthScrollLimit;
 float Game::Window::heightScrollLimit;
 int Game::joystick;
+int Game::currentScreen;
 
 Game::Animation getIdleAnimationFromDirection(Game::Direction dir) {
 	switch (dir) {

@@ -20,7 +20,13 @@ vec2f normalize(vec2f vec);
 
 namespace Game {
 	extern int joystick;
-	
+	extern int currentScreen;
+
+	enum Screen {
+		Menu = 0, 
+		Game = 1
+	};
+
 	enum Animation {
 		IdleN = 0, 
 		IdleW = 1, 

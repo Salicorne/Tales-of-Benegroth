@@ -1,20 +1,23 @@
 #include "Screen.h"
 
 
-void render(sf::RenderWindow& window, MemoryManager& mgr) {
+/*void render(sf::RenderWindow& window, MemoryManager& mgr) {
 	while (window.isOpen()) {
 		window.clear();
 		mgr.draw(window);
 		window.display();
 		sf::sleep(sf::milliseconds(10));
 	}
-}
+}*/
 
 void animate(sf::RenderWindow& window, MemoryManager& mgr, GameManager& gmgr) {
 	sf::Clock clock;
 	while (window.isOpen()) {
-		mgr.animateSprites(clock.restart());
-		mgr.updateBlur(gmgr.getPlayer()->getSpriteSet()->getFeetPos());
+		sf::Time elapsed = clock.restart();
+		if(Game::currentScreen == Game::Screen::Game) {
+			mgr.animateSprites(elapsed);
+			mgr.updateBlur(gmgr.getPlayer()->getSpriteSet()->getFeetPos());
+		}
 		sf::sleep(sf::milliseconds(50));
 	}
 }
@@ -22,7 +25,10 @@ void animate(sf::RenderWindow& window, MemoryManager& mgr, GameManager& gmgr) {
 void action(sf::RenderWindow& window, MemoryManager& mgr, GameManager& gmgr) {
 	sf::Clock clock;
 	while (window.isOpen()) {
-		gmgr.playActors(clock.restart());
+		sf::Time elapsed = clock.restart();
+		if(Game::currentScreen == Game::Screen::Game) {
+			gmgr.playActors(elapsed);
+		}
 		sf::sleep(sf::milliseconds(20));
 	}
 }
@@ -43,7 +49,7 @@ int main()
 
 	srand(time(NULL));
 
-	sf::RenderWindow window(sf::VideoMode(Game::Window::Width, Game::Window::Height), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(Game::Window::Width, Game::Window::Height), "SFML works!", sf::Style::Titlebar | sf::Style::Close);
 	//sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen);
 	window.setActive(false);
 	window.setKeyRepeatEnabled(false);
@@ -69,7 +75,7 @@ int main()
 	screens.push_back(&menuScreen);
 	GameScreen gameScreen(gui);
 	screens.push_back(&gameScreen);
-	int screen = 0;
+	Game::currentScreen = 0;
 
 	if(!Scene::loadScene("save.dat", mgr, gmgr)) {
 		std::cerr << "Error loading main scene, aborting. " << std::endl;
@@ -85,9 +91,9 @@ int main()
 
 	sf::Clock clock;
 	vec2f playerMovement(0, 0);
-	while(screen >= 0) {
-		screens[screen]->setUp();
-		screen = screens[screen]->run(mgr, gmgr, window);
+	while(Game::currentScreen >= 0) {
+		screens[Game::currentScreen]->setUp();
+		Game::currentScreen = screens[Game::currentScreen]->run(mgr, gmgr, window);
 	}
 	/*while (window.isOpen())
 	{
