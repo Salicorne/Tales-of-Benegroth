@@ -31,6 +31,7 @@ void MenuScreen::setUp() {
 int MenuScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& window) {
     sf::Clock clock;
     window.resetGLStates();
+	gwindow->SetAllocation(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
 	while (window.isOpen())
 	{
 		if(next != -2) { 
