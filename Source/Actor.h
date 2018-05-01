@@ -18,8 +18,14 @@ class Actor {
 };
 
 class NPC : public Actor {
+	protected:
+		std::vector<std::pair<vec2f, sf::Time>> locations;
+		int currentLocation;
+		sf::Time locationCounter;
+		
 	public:
 		NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id);
 		virtual void action(sf::Time elapsed);
+		virtual void addLocation(vec2f p, sf::Time t);
 };
 

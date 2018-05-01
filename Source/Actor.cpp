@@ -28,8 +28,30 @@ SpriteSet* Actor::getSpriteSet() {
 	return sprite;
 }
 
-NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id) : Actor(sprite, pos, speed, id) {}
+NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id) : Actor(sprite, pos, speed, id), currentLocation(0) {}
 
 void NPC::action(sf::Time elapsed) {
-	moveTo(vec2f(0, 0), elapsed);
+	if(locations.size() > 0) {
+		if(norm(vec2f(posInWorld.x - locations.at(currentLocation).first.x, posInWorld.y - locations.at(currentLocation).first.y)) < 1) {
+			// NPC is standing in a location spot
+			locationCounter -= elapsed;
+			if(locationCounter <= sf::Time::Zero) {
+				// Change current location
+				currentLocation = (currentLocation + 1) % locations.size();
+				locationCounter = locations.at(currentLocation).second;
+			}
+			move(vec2f(0,0), elapsed);
+		}
+		else {
+			// Move
+			moveTo(locations.at(currentLocation).first, elapsed);
+		}
+	}
+}
+
+void NPC::addLocation(vec2f p, sf::Time t) {
+	if(locations.size() == 0) {
+		locationCounter = t;
+	}
+	locations.push_back(std::pair<vec2f, sf::Time>(p, t));
 }
