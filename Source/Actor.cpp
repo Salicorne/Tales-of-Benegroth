@@ -1,8 +1,12 @@
 #include "Actor.h"
 
-Actor::Actor(SpriteSet* sprite, vec2f pos, float speed, game_id id) : sprite(sprite), posInWorld(pos), speed(speed), id(id) {
+Actor::Actor(SpriteSet* sprite, vec2f pos, float speed, game_id id) : sprite(sprite), posInWorld(pos), speed(speed), id(id), possibleInteraction(false) {
 	sprite->setPosInWorld(pos);
 	direction = Game::Direction::South;
+}
+
+bool Actor::canHaveInteraction() {
+	return possibleInteraction;
 }
 
 void Actor::move(vec2f delta, sf::Time elapsed) {
@@ -24,11 +28,17 @@ void Actor::moveTo(vec2f pos, sf::Time elapsed) {
 
 void Actor::action(sf::Time elapsed) {}
 
+std::string Actor::getInteractionMessage() {
+	return "...";
+}
+
 SpriteSet* Actor::getSpriteSet() {
 	return sprite;
 }
 
-NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id) : Actor(sprite, pos, speed, id), currentLocation(0) {}
+NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id) : Actor(sprite, pos, speed, id), currentLocation(0) {
+	possibleInteraction = true;
+}
 
 void NPC::action(sf::Time elapsed) {
 	if(locations.size() > 0) {
@@ -47,6 +57,10 @@ void NPC::action(sf::Time elapsed) {
 			moveTo(locations.at(currentLocation).first, elapsed);
 		}
 	}
+}
+
+std::string NPC::getInteractionMessage() {
+	return "E : Parler";
 }
 
 void NPC::addLocation(vec2f p, sf::Time t) {

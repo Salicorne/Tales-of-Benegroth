@@ -8,10 +8,13 @@ class Actor {
 		game_id id;
 		float speed;
 		Game::Direction direction;
+		bool possibleInteraction;
 
 	public:
 		Actor(SpriteSet* sprite, vec2f pos, float speed, game_id id);
 		SpriteSet* getSpriteSet();
+		bool canHaveInteraction();
+		virtual std::string getInteractionMessage();
 		virtual void move(vec2f delta, sf::Time elapsed);
 		virtual void moveTo(vec2f pos, sf::Time elapsed);
 		virtual void action(sf::Time elapsed);
@@ -27,5 +30,6 @@ class NPC : public Actor {
 		NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id);
 		virtual void action(sf::Time elapsed);
 		virtual void addLocation(vec2f p, sf::Time t);
+		virtual std::string getInteractionMessage();
 };
 

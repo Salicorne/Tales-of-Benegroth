@@ -49,10 +49,10 @@ void GameManager::movePlayer(vec2f delta, sf::Time elapsed) {
 void GameManager::updateActionMessage() {
 	if(player == nullptr) { return; }
 	for(Actor* a : actors) {
-		if(a != player && norm(a->getSpriteSet()->getPosInWorld() - player->getSpriteSet()->getPosInWorld()) < Game::minDistanceForAction) { //todo: add boolean to check if we can speak to this actor
+		if(a != player && a->canHaveInteraction() && norm(a->getSpriteSet()->getPosInWorld() - player->getSpriteSet()->getPosInWorld()) < Game::minDistanceForAction) {
 			target = a;
 			actionMessageMutex.lock();
-			actionMessage = "[E] : Parler";	//todo: get this message from the actor
+			actionMessage = a->getInteractionMessage();
 			actionMessageMutex.unlock();
 			return;
 		}
