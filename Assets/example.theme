@@ -4,7 +4,7 @@ Window {
 
 * {
 	FontName: Assets/Onciale PhF01.ttf;
-	FontSize: 25;
+	FontSize: 20;
 }
 
 /* Matches all Labels who are direct children of the table */

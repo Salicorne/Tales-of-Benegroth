@@ -28,6 +28,8 @@ void Actor::moveTo(vec2f pos, sf::Time elapsed) {
 
 void Actor::action(sf::Time elapsed) {}
 
+void Actor::interact(AbstractInteractionProvider* aip) {}
+
 std::string Actor::getInteractionMessage() {
 	return "...";
 }
@@ -57,6 +59,10 @@ void NPC::action(sf::Time elapsed) {
 			moveTo(locations.at(currentLocation).first, elapsed);
 		}
 	}
+}
+
+void NPC::interact(AbstractInteractionProvider* aip) {
+	aip->showMessage("Sample NPC", "Hi ! I am your first NPC. I don't have so much to tell you right now, I am only supposed to check these three locations. But don't hesitate to come back later, when interactions will be a little more developped ! ");
 }
 
 std::string NPC::getInteractionMessage() {

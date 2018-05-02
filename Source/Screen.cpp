@@ -9,7 +9,7 @@ MenuScreen::MenuScreen(sfg::SFGUI& gui) : AbstractScreen(gui) {
 	next = -2;
 }
 
-void MenuScreen::setUp() {
+void MenuScreen::setUp(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& window) {
 	next = -2;
 	title = sfg::Label::Create("Tales of Benegroth v0.1");
 	beginButton = sfg::Button::Create("Commencer");
@@ -25,13 +25,15 @@ void MenuScreen::setUp() {
 	gwindow->SetTitle("");
 	gwindow->Add(box);
 	desktop.Add(gwindow);
-	//desktop.LoadThemeFromFile("Assets/example.theme");
+	desktop.LoadThemeFromFile("Assets/example.theme");
+	gwindow->SetAllocation(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
+
+	gmgr.setShowMessageFunction([](std::string, std::string){});
 }
 
 int MenuScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& window) {
     sf::Clock clock;
     window.resetGLStates();
-	gwindow->SetAllocation(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
 	while (window.isOpen())
 	{
 		if(next != -2) { 
@@ -76,29 +78,38 @@ void MenuScreen::cleanup() {
 GameScreen::GameScreen(sfg::SFGUI& gui) : AbstractScreen(gui) {
 }
 
-void GameScreen::setUp() {
+void GameScreen::setUp(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& window) {
 	message = sfg::Label::Create(L"label");
+	message->SetRequisition(vec2f(window.getSize().x-120, 0));
+	message->SetLineWrap(true);
 	actionMessage = sfg::Label::Create("");
 	closeMessageButton = sfg::Button::Create("Fermer");
-	messageBox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 5.0f);
+	messageBox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 50.0f);
 	messageBox->Pack(message);
-	messageBox->Pack(closeMessageButton, false);
+	messageBox->Pack(closeMessageButton);
 
+	scrollwindow = sfg::ScrolledWindow::Create();
+	scrollwindow->SetScrollbarPolicy(sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
+	scrollwindow->AddWithViewport(messageBox);
 	gwindow = sfg::Window::Create();
 	gwindow->SetTitle("");
-	gwindow->Add(messageBox);
+	gwindow->Add(scrollwindow);
+	gwindow->SetAllocation(sf::FloatRect(20, window.getSize().y/2+20, window.getSize().x-40, window.getSize().y/2-40));
 	gwindow->Show(false);
 	closeMessageButton->GetSignal(sfg::Widget::OnLeftClick).Connect([this] {gwindow->Show(false); actionMessage->Show(true); });
+
+	actionMessage->SetAllocation(sf::FloatRect(0, window.getSize().y * 0.8f, window.getSize().x, actionMessage->GetAllocation().height));
+
 	desktop.Add(gwindow);
 	desktop.Add(actionMessage);
 	desktop.LoadThemeFromFile("Assets/example.theme");
 	next = -2;
+
+	gmgr.setShowMessageFunction([this](std::string a, std::string b){ this->showMessage(a, b); });
 }
 
 int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& window) {
     sf::Clock clock;
-	gwindow->SetAllocation(sf::FloatRect(20, window.getSize().y/2+20, window.getSize().x-40, window.getSize().y/2-40));
-	actionMessage->SetAllocation(sf::FloatRect(0, window.getSize().y * 0.8f, window.getSize().x, actionMessage->GetAllocation().height));
 
 	vec2f playerMovement(0, 0);
     while (window.isOpen())
@@ -124,6 +135,9 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 				}
 				if (event.key.code == sf::Keyboard::P) {
 					showMessage("Magicien", "Bienvenue, jeune homme...");
+				}
+				if (event.key.code == sf::Keyboard::E) {
+					gmgr.interact();
 				}
 			}
 		}

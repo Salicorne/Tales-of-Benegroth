@@ -4,6 +4,7 @@
 GameManager::GameManager(MemoryManager& mgr, sf::Window& window) : mgr(mgr), window(window) {
 	player = nullptr;
 	target = nullptr;
+	showMessageFunction = [](std::string, std::string){};
 }
 
 GameManager::~GameManager() {
@@ -73,6 +74,24 @@ void GameManager::playActors(sf::Time elapsed) {
 		a->action(elapsed);
 	}
 }
+
+void GameManager::interact() {
+	if(target != nullptr) {
+		//todo
+		target->interact(this);
+	}
+}
+
+void GameManager::setShowMessageFunction(std::function<void(std::string, std::string)> fun) {
+	showMessageFunction = fun;
+}
+
+void GameManager::showMessage(std::string sender, std::string message) {
+	showMessageFunction(sender, message);
+}
+
+
+
 
 void AssetCreator::createTreeSprite(MemoryManager& mgr, game_id trunk, game_id leaves, int minOffset, int maxOffset, vec2f posInWorld, game_id id, float feetOffset) {
 	mgr.addTreeSprite(trunk, leaves, minOffset + (rand() % (maxOffset - minOffset + 1)), posInWorld, id, feetOffset);

@@ -3,7 +3,7 @@
 #include <SFGUI/SFGUI.hpp>
 #include <SFGUI/Widgets.hpp>
 
-class GameManager {
+class GameManager : public AbstractInteractionProvider {
 	protected:
 		MemoryManager& mgr;
 		std::vector<Actor*> actors;
@@ -12,6 +12,9 @@ class GameManager {
 		std::string actionMessage;
 		Actor* target;
 		std::mutex actionMessageMutex;
+		
+		// AbstractInteractionProvider
+		std::function<void(std::string, std::string)> showMessageFunction; 
 
 	public:
 		GameManager(MemoryManager& mgr, sf::Window& window);
@@ -25,6 +28,11 @@ class GameManager {
 		void updateActionMessage();
 		std::string getActionMessage();
 		void playActors(sf::Time elapsed);
+		void interact();
+
+		//AbstractInteractionProvider
+		void setShowMessageFunction(std::function<void(std::string, std::string)> fun);
+		virtual void showMessage(std::string sender, std::string message);
 };
 
 class AssetCreator {

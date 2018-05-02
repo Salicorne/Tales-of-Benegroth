@@ -1,6 +1,11 @@
 #pragma once
 #include "Graphics.h"
 
+class AbstractInteractionProvider {
+	public:
+		virtual void showMessage(std::string sender, std::string message) = 0;
+};
+
 class Actor {
 	protected:
 		SpriteSet* sprite;
@@ -18,6 +23,7 @@ class Actor {
 		virtual void move(vec2f delta, sf::Time elapsed);
 		virtual void moveTo(vec2f pos, sf::Time elapsed);
 		virtual void action(sf::Time elapsed);
+		virtual void interact(AbstractInteractionProvider* aip);
 };
 
 class NPC : public Actor {
@@ -31,5 +37,6 @@ class NPC : public Actor {
 		virtual void action(sf::Time elapsed);
 		virtual void addLocation(vec2f p, sf::Time t);
 		virtual std::string getInteractionMessage();
+		virtual void interact(AbstractInteractionProvider* aip);
 };
 

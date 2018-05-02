@@ -37,8 +37,8 @@ int main()
 {
 	std::cout << "Tales of Benegroth" << std::endl;
 	sfg::SFGUI gui;
-	Game::Window::Width = 711;
-	Game::Window::Height = 400;
+	Game::Window::Width = 853;
+	Game::Window::Height = 480;
 	Game::Window::widthScrollLimit = 0.1f;
 	Game::Window::heightScrollLimit = 0.1f;
 
@@ -87,7 +87,7 @@ int main()
 	sf::Clock clock;
 	vec2f playerMovement(0, 0);
 	while(Game::currentScreen >= 0) {
-		screens[Game::currentScreen]->setUp();
+		screens[Game::currentScreen]->setUp(mgr, gmgr, window);
 		Game::currentScreen = screens[Game::currentScreen]->run(mgr, gmgr, window);
 	}
 
