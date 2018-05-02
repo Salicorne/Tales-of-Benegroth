@@ -25,7 +25,7 @@ void MenuScreen::setUp() {
 	gwindow->SetTitle("");
 	gwindow->Add(box);
 	desktop.Add(gwindow);
-	desktop.LoadThemeFromFile("Assets/example.theme");
+	//desktop.LoadThemeFromFile("Assets/example.theme");
 }
 
 int MenuScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& window) {
@@ -78,6 +78,7 @@ GameScreen::GameScreen(sfg::SFGUI& gui) : AbstractScreen(gui) {
 
 void GameScreen::setUp() {
 	message = sfg::Label::Create(L"label");
+	actionMessage = sfg::Label::Create("");
 	closeMessageButton = sfg::Button::Create("Fermer");
 	messageBox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 5.0f);
 	messageBox->Pack(message);
@@ -87,14 +88,18 @@ void GameScreen::setUp() {
 	gwindow->SetTitle("");
 	gwindow->Add(messageBox);
 	gwindow->Show(false);
-	closeMessageButton->GetSignal(sfg::Widget::OnLeftClick).Connect([this] {cleanup(); });
+	closeMessageButton->GetSignal(sfg::Widget::OnLeftClick).Connect([this] {gwindow->Show(false); actionMessage->Show(true); });
 	desktop.Add(gwindow);
+	desktop.Add(actionMessage);
 	desktop.LoadThemeFromFile("Assets/example.theme");
 	next = -2;
 }
 
 int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& window) {
     sf::Clock clock;
+	gwindow->SetAllocation(sf::FloatRect(20, window.getSize().y/2+20, window.getSize().x-40, window.getSize().y/2-40));
+	actionMessage->SetAllocation(sf::FloatRect(0, window.getSize().y * 0.8f, window.getSize().x, actionMessage->GetAllocation().height));
+
 	vec2f playerMovement(0, 0);
     while (window.isOpen())
 	{
@@ -122,6 +127,7 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 				}
 			}
 		}
+		setActionMessage(gmgr.getActionMessage());
 		desktop.Update(elapsed.asSeconds());
 
 
@@ -156,12 +162,16 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 
 void GameScreen::cleanup() {
 	gwindow->Show(false);
+	actionMessage->Show(false);
 }
 
 void GameScreen::showMessage(std::string sender, std::string message) {
 	this->message->SetText(message);
-	// this->gwindow->SetPosition(vec2f(0, window.getSize().y/2));
-	this->gwindow->SetPosition(vec2f(0,0));
 	this->gwindow->SetTitle(sender);
 	this->gwindow->Show(true);
+	this->actionMessage->Show(false);
+}
+
+void GameScreen::setActionMessage(std::string message) {
+	this->actionMessage->SetText(message);
 }

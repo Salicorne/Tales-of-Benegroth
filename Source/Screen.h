@@ -34,6 +34,7 @@ class GameScreen : public AbstractScreen {
 		sfg::Button::Ptr closeMessageButton;
 		sfg::Box::Ptr messageBox;
 		sfg::Window::Ptr gwindow;
+        sfg::Label::Ptr actionMessage;
 
     public:
         GameScreen(sfg::SFGUI& gui);
@@ -41,4 +42,5 @@ class GameScreen : public AbstractScreen {
         virtual int run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& window);
 		virtual void cleanup();
 		void showMessage(std::string sender, std::string message);
+        void setActionMessage(std::string message);
 };

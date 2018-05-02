@@ -3,6 +3,7 @@
 
 GameManager::GameManager(MemoryManager& mgr, sf::Window& window) : mgr(mgr), window(window) {
 	player = nullptr;
+	target = nullptr;
 }
 
 GameManager::~GameManager() {
@@ -43,6 +44,28 @@ void GameManager::movePlayer(vec2f delta, sf::Time elapsed) {
 		if (feet.y > Game::Window::Height * (1 - Game::Window::heightScrollLimit)) { windowMovement.y += feet.y - Game::Window::Height * (1 - Game::Window::heightScrollLimit); }
 		mgr.moveWindow(windowMovement);
 	}
+}
+
+void GameManager::updateActionMessage() {
+	if(player == nullptr) { return; }
+	for(Actor* a : actors) {
+		if(a != player && norm(a->getSpriteSet()->getPosInWorld() - player->getSpriteSet()->getPosInWorld()) < Game::minDistanceForAction) { //todo: add boolean to check if we can speak to this actor
+			target = a;
+			actionMessageMutex.lock();
+			actionMessage = "[E] : Parler";	//todo: get this message from the actor
+			actionMessageMutex.unlock();
+			return;
+		}
+	}
+	target = nullptr;
+	actionMessage = "";
+}
+
+std::string GameManager::getActionMessage() {
+	actionMessageMutex.lock();
+	std::string m = actionMessage;
+	actionMessageMutex.unlock();
+	return m;
 }
 
 void GameManager::playActors(sf::Time elapsed) {

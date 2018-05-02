@@ -23,6 +23,15 @@ void action(sf::RenderWindow& window, MemoryManager& mgr, GameManager& gmgr) {
 	}
 }
 
+void updateActionMessage(sf::RenderWindow& window, GameManager& gmgr) {
+	while (window.isOpen()) {
+		if(Game::currentScreen == Game::Screen::Game) {
+			gmgr.updateActionMessage();
+		}
+		sf::sleep(sf::milliseconds(300));
+	}
+}
+
 
 int main()
 {
@@ -73,6 +82,7 @@ int main()
 
 	std::thread animateThread(animate, std::ref(window), std::ref(mgr), std::ref(gmgr));
 	std::thread actionThread(action, std::ref(window), std::ref(mgr), std::ref(gmgr));
+	std::thread actionMessageThread(updateActionMessage, std::ref(window), std::ref(gmgr));
 
 	sf::Clock clock;
 	vec2f playerMovement(0, 0);
@@ -82,6 +92,7 @@ int main()
 	}
 
 	window.close();
+	actionMessageThread.join();
 	animateThread.join();
 	actionThread.join();
 

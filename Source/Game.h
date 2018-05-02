@@ -9,6 +9,9 @@ class GameManager {
 		std::vector<Actor*> actors;
 		Actor* player;
 		sf::Window& window;
+		std::string actionMessage;
+		Actor* target;
+		std::mutex actionMessageMutex;
 
 	public:
 		GameManager(MemoryManager& mgr, sf::Window& window);
@@ -19,7 +22,8 @@ class GameManager {
 		void setPlayer(Actor* a);
 
 		void movePlayer(vec2f delta, sf::Time elapsed);
-
+		void updateActionMessage();
+		std::string getActionMessage();
 		void playActors(sf::Time elapsed);
 };
 
