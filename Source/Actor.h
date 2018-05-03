@@ -27,7 +27,7 @@ class Actor {
 		virtual std::string getInteractionMessage();
 		virtual void move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm);
 		virtual void moveTo(vec2f pos, sf::Time elapsed, AbstractCollisionsManager& acm);
-		virtual void action(sf::Time elapsed);
+		virtual void action(sf::Time elapsed, AbstractCollisionsManager& acm);
 		virtual void interact(AbstractInteractionProvider* aip);
 };
 

@@ -75,7 +75,7 @@ std::string GameManager::getActionMessage() {
 
 void GameManager::playActors(sf::Time elapsed) {
 	for (Actor* a : actors) {
-		a->action(elapsed);
+		a->action(elapsed, *this);
 	}
 }
 

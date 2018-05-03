@@ -17,11 +17,11 @@ void Actor::move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm) 
 	if (abs(delta.x) < 0.1) { delta.x = 0; }
 	if (abs(delta.y) < 0.1) { delta.y = 0; }
 	if(delta.x != 0 || delta.y != 0) {
-		if(acm.collides(posInWorld + delta)) {  // In case of collision
+		/*if(acm.collides(posInWorld + delta)) {  // In case of collision
 			// Slide
 			if(acm.collides(vec2f(posInWorld.x + delta.x, posInWorld.y))) { delta.x = 0; }
 			if(acm.collides(vec2f(posInWorld.x, posInWorld.y + delta.y))) { delta.y = 0; }
-		}
+		}*/
 	}
 	this->sprite->move(delta);
 	this->posInWorld += delta;
@@ -33,7 +33,7 @@ void Actor::moveTo(vec2f pos, sf::Time elapsed, AbstractCollisionsManager& acm) 
 	move(norm(pos - posInWorld) > 1 ? pos - posInWorld : vec2f(0,0), elapsed, acm);
 }
 
-void Actor::action(sf::Time elapsed) {}
+void Actor::action(sf::Time elapsed, AbstractCollisionsManager& acm) {}
 
 void Actor::interact(AbstractInteractionProvider* aip) {}
 
