@@ -33,9 +33,13 @@ void GameManager::setPlayer(Actor * a) {
 	player = a;
 }
 
+void GameManager::addCollision(sf::FloatRect c) {
+	collisions.push_back(c);
+}
+
 void GameManager::movePlayer(vec2f delta, sf::Time elapsed) {
 	if (player != nullptr) {
-		player->move(delta, elapsed);
+		player->move(delta, elapsed, *this);
 		vec2f feet = player->getSpriteSet()->getFeetPos() - mgr.getWindowPos();
 		vec2f head = player->getSpriteSet()->getHeadPos() - mgr.getWindowPos();
 		vec2f windowMovement(0, 0);
@@ -88,6 +92,13 @@ void GameManager::setShowMessageFunction(std::function<void(std::string, std::st
 
 void GameManager::showMessage(std::string sender, std::string message) {
 	showMessageFunction(sender, message);
+}
+
+bool GameManager::collides(vec2f point) {
+	for(sf::FloatRect& c : collisions) {
+		if(c.contains(point)) {return true;}
+	}
+	return false;
 }
 
 

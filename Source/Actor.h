@@ -6,6 +6,11 @@ class AbstractInteractionProvider {
 		virtual void showMessage(std::string sender, std::string message) = 0;
 };
 
+class AbstractCollisionsManager {
+	public:
+		virtual bool collides(vec2f point) = 0;
+};
+
 class Actor {
 	protected:
 		SpriteSet* sprite;
@@ -20,8 +25,8 @@ class Actor {
 		SpriteSet* getSpriteSet();
 		bool canHaveInteraction();
 		virtual std::string getInteractionMessage();
-		virtual void move(vec2f delta, sf::Time elapsed);
-		virtual void moveTo(vec2f pos, sf::Time elapsed);
+		virtual void move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm);
+		virtual void moveTo(vec2f pos, sf::Time elapsed, AbstractCollisionsManager& acm);
 		virtual void action(sf::Time elapsed);
 		virtual void interact(AbstractInteractionProvider* aip);
 };
@@ -34,7 +39,7 @@ class NPC : public Actor {
 		
 	public:
 		NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id);
-		virtual void action(sf::Time elapsed);
+		virtual void action(sf::Time elapsed, AbstractCollisionsManager& acm);
 		virtual void addLocation(vec2f p, sf::Time t);
 		virtual std::string getInteractionMessage();
 		virtual void interact(AbstractInteractionProvider* aip);

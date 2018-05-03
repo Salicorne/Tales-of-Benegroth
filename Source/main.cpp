@@ -60,7 +60,7 @@ int main()
 	GameManager gmgr(mgr, window);
 
 	Game::joystick = -1;
-	for (unsigned int i = 1; i< sf::Joystick::Count; ++i)
+	for (unsigned int i = 0; i< sf::Joystick::Count; ++i)
 	{
 		if (sf::Joystick::isConnected(i)) {
 			std::cout << "Joystick " << i << " is connected !" << std::endl;

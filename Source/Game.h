@@ -3,7 +3,7 @@
 #include <SFGUI/SFGUI.hpp>
 #include <SFGUI/Widgets.hpp>
 
-class GameManager : public AbstractInteractionProvider {
+class GameManager : public AbstractInteractionProvider, public AbstractCollisionsManager {
 	protected:
 		MemoryManager& mgr;
 		std::vector<Actor*> actors;
@@ -13,8 +13,9 @@ class GameManager : public AbstractInteractionProvider {
 		Actor* target;
 		std::mutex actionMessageMutex;
 		
-		// AbstractInteractionProvider
+		//Inheritance
 		std::function<void(std::string, std::string)> showMessageFunction; 
+		std::vector<sf::FloatRect> collisions;
 
 	public:
 		GameManager(MemoryManager& mgr, sf::Window& window);
@@ -23,6 +24,7 @@ class GameManager : public AbstractInteractionProvider {
 		Actor* addActor(game_id sprite, vec2f pos, float speed, game_id id);
 		NPC* addNPC(game_id sprite, vec2f pos, float speed, game_id id);
 		void setPlayer(Actor* a);
+		void addCollision(sf::FloatRect c);
 
 		void movePlayer(vec2f delta, sf::Time elapsed);
 		void updateActionMessage();
@@ -30,9 +32,11 @@ class GameManager : public AbstractInteractionProvider {
 		void playActors(sf::Time elapsed);
 		void interact();
 
-		//AbstractInteractionProvider
+		//Inheritance
 		void setShowMessageFunction(std::function<void(std::string, std::string)> fun);
 		virtual void showMessage(std::string sender, std::string message);
+
+		virtual bool collides(vec2f point);
 };
 
 class AssetCreator {

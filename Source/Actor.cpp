@@ -9,21 +9,28 @@ bool Actor::canHaveInteraction() {
 	return possibleInteraction;
 }
 
-void Actor::move(vec2f delta, sf::Time elapsed) {
+void Actor::move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm) {
 	delta = normalize(delta);
 	delta *= speed;
 	delta *= elapsed.asMilliseconds() / 10.f;
 	// dead axis
 	if (abs(delta.x) < 0.1) { delta.x = 0; }
 	if (abs(delta.y) < 0.1) { delta.y = 0; }
+	if(delta.x != 0 || delta.y != 0) {
+		if(acm.collides(posInWorld + delta)) {  // In case of collision
+			// Slide
+			if(acm.collides(vec2f(posInWorld.x + delta.x, posInWorld.y))) { delta.x = 0; }
+			if(acm.collides(vec2f(posInWorld.x, posInWorld.y + delta.y))) { delta.y = 0; }
+		}
+	}
 	this->sprite->move(delta);
 	this->posInWorld += delta;
 	direction = getDirectionFromVectorWithDefault(delta, direction);
 	this->sprite->setAnimation(norm(delta) > 0 ? getWalkAnimationFromDirection(direction) : getIdleAnimationFromDirection(direction));
 }
 
-void Actor::moveTo(vec2f pos, sf::Time elapsed) {
-	move(norm(pos - posInWorld) > 1 ? pos - posInWorld : vec2f(0,0), elapsed);
+void Actor::moveTo(vec2f pos, sf::Time elapsed, AbstractCollisionsManager& acm) {
+	move(norm(pos - posInWorld) > 1 ? pos - posInWorld : vec2f(0,0), elapsed, acm);
 }
 
 void Actor::action(sf::Time elapsed) {}
@@ -42,7 +49,7 @@ NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id) : Actor(sprite, 
 	possibleInteraction = true;
 }
 
-void NPC::action(sf::Time elapsed) {
+void NPC::action(sf::Time elapsed, AbstractCollisionsManager& acm) {
 	if(locations.size() > 0) {
 		if(norm(vec2f(posInWorld.x - locations.at(currentLocation).first.x, posInWorld.y - locations.at(currentLocation).first.y)) < 1) {
 			// NPC is standing in a location spot
@@ -52,11 +59,11 @@ void NPC::action(sf::Time elapsed) {
 				currentLocation = (currentLocation + 1) % locations.size();
 				locationCounter = locations.at(currentLocation).second;
 			}
-			move(vec2f(0,0), elapsed);
+			move(vec2f(0,0), elapsed, acm);
 		}
 		else {
 			// Move
-			moveTo(locations.at(currentLocation).first, elapsed);
+			moveTo(locations.at(currentLocation).first, elapsed, acm);
 		}
 	}
 }
