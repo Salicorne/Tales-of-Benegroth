@@ -53,6 +53,7 @@ namespace Game {
 		AnimatedSprite = 3, 
 		TreeSprite = 4, 
 		SpriteSet = 5, 
+		Collision = 15, 
 		SetLayer = 21, 
 		SetBlur = 22, 
 		SetPlayer = 23, 

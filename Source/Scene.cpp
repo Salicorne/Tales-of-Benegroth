@@ -106,6 +106,17 @@ bool Scene::loadScene(std::string filePath, MemoryManager& mgr, GameManager& gmg
                     }
                     break;
 
+                case Game::FileOp::Collision:
+                    {
+                        float x, y, w, h;
+                        if(!(stream >> x)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
+                        if(!(stream >> y)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
+                        if(!(stream >> w)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
+                        if(!(stream >> h)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
+                        gmgr.addCollision(sf::FloatRect(x, y, w, h));
+                    }
+                    break;
+
                 case Game::FileOp::SetLayer:
                     {
                         int id, layer;
