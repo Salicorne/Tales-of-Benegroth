@@ -147,6 +147,9 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 				if (event.key.code == sf::Keyboard::E) {
 					gmgr.interact();
 				}
+				if (event.key.code == sf::Keyboard::O) {
+					Scene::loadScene("save2.dat", mgr, gmgr);
+				}
 			}
 		}
 		setActionMessage(gmgr.getActionMessage());

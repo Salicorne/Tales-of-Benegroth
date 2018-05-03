@@ -12,6 +12,8 @@ class GameManager : public AbstractInteractionProvider, public AbstractCollision
 		std::string actionMessage;
 		Actor* target;
 		std::mutex actionMessageMutex;
+		std::mutex actorsMutex;
+		std::mutex collisionsMutex;
 		
 		//Inheritance
 		std::function<void(std::string, std::string)> showMessageFunction; 
@@ -26,6 +28,7 @@ class GameManager : public AbstractInteractionProvider, public AbstractCollision
 		void setPlayer(Actor* a);
 		void addCollision(sf::FloatRect c);
 		float getPlayerLifeRatio();
+		void clearScene();
 
 		void movePlayer(vec2f delta, sf::Time elapsed);
 		void updateActionMessage();

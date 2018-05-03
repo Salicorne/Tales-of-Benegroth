@@ -25,9 +25,11 @@ game_id MemoryManager::getFreeSpriteId() {
 }
 
 void MemoryManager::addTexture(std::string path, game_id id) {
-	texturesMutex.lock();
-	this->textures.push_back(new Texture(path, id));
-	texturesMutex.unlock();
+	if(!containsTexture(id)) {
+		texturesMutex.lock();
+		this->textures.push_back(new Texture(path, id));
+		texturesMutex.unlock();
+	}
 }
 
 void MemoryManager::addSprite(game_id texture, vec2f posInWorld, game_id id, float feetOffset) {
@@ -68,6 +70,15 @@ void MemoryManager::addRepeatedSprite(game_id texture, int w, int h, vec2f posIn
 	spritesMutex.lock();
 	sprites.push_back(new RepeatedSprite(getTexture(texture), w, h, posInWorld, id, feetOffset));
 	spritesMutex.unlock();
+}
+
+bool MemoryManager::containsTexture(game_id id) {
+	texturesMutex.lock();
+	for (Texture* txt : textures) {
+		if (txt->getId() == id) { texturesMutex.unlock(); return true; }
+	}
+	texturesMutex.unlock();
+	return false;
 }
 
 Texture& MemoryManager::getTexture(game_id id) {

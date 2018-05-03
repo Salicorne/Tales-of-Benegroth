@@ -4,6 +4,7 @@ bool Scene::loadScene(std::string filePath, MemoryManager& mgr, GameManager& gmg
     std::ifstream file(filePath);
     if(!file) { std::cerr << "Error : could not open scene file " << filePath << std::endl; return false; }
     mgr.dropSprites();
+    gmgr.clearScene();
 
     int op = -1, i = 0;
     std::string line;

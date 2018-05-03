@@ -23,6 +23,7 @@ class MemoryManager {
 		void addAdditionalSprite(game_id texture, sf::IntRect rect, sf::Time duration, game_id id);
 		SpriteSet* addSpriteSet(game_id texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset = 0);
 		void addRepeatedSprite(game_id texture, int w, int h, vec2f posInWorld, game_id id, float feetOffset = 0);
+		bool containsTexture(game_id id);
 		Texture& getTexture(game_id id);
 		Sprite& getSprite(game_id id);
 		vec2f getWindowPos();
