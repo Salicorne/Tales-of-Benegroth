@@ -32,6 +32,6 @@ class MemoryManager {
 		void moveWindow(vec2f delta);
 		void animateSprites(sf::Time elapsed);
 		void sortSprites();
-		void draw(sf::RenderTarget& window);
+		void draw(sf::RenderTarget& window, sf::Shader* shader = nullptr);
 };
 

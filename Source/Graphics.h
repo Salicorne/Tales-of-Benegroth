@@ -37,7 +37,7 @@ class Sprite : public sf::Sprite {
 		bool blurs();
 
 		virtual void blur(bool b);
-		virtual void draw(sf::RenderTarget& window);
+		virtual void draw(sf::RenderTarget& window, sf::Shader* shader);
 		virtual void setPosInWorld(vec2f pos);
 		virtual void move(vec2f delta);
 
@@ -52,7 +52,7 @@ class TreeSprite : public Sprite {
 
 	public:
 		TreeSprite(Texture& trunk, Texture& top, int offset, vec2f posInWorld, game_id id, float feetOffset);
-		virtual void draw(sf::RenderTarget& window);
+		virtual void draw(sf::RenderTarget& window, sf::Shader* shader);
 		virtual void blur(bool b);
 };
 
@@ -76,7 +76,7 @@ class AnimatedSprite : public Sprite {
 class AdditionalSprite : public AnimatedSprite {
 	public:
 		AdditionalSprite(Texture& texture, sf::IntRect rect, sf::Time duration, game_id id);
-		virtual void draw(sf::RenderTarget& window);
+		virtual void draw(sf::RenderTarget& window, sf::Shader* shader);
 		virtual void animate(sf::Time elapsed);
 };
 
@@ -87,7 +87,7 @@ class SpriteSet : public AnimatedSprite {
 	public:
 		SpriteSet(Texture& texture, sf::IntRect rect, sf::Time duration, vec2f posInWorld, game_id id, float feetOffset);
 		void addAdditionalSprite(AdditionalSprite& spr);
-		virtual void draw(sf::RenderTarget& window);
+		virtual void draw(sf::RenderTarget& window, sf::Shader* shader);
 		virtual void setAnimation(Game::Animation a);
 		virtual void move(vec2f delta);
 		virtual void setPosInWorld(vec2f pos);

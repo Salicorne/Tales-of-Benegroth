@@ -79,6 +79,10 @@ GameScreen::GameScreen(sfg::SFGUI& gui) : AbstractScreen(gui) {
 }
 
 void GameScreen::setUp(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& window) {
+	if(!shader.loadFromFile("Assets/shader.frag", sf::Shader::Fragment)) {
+		std::cerr << "Error : could not load shader at Assets/shader.frag" << std::endl;
+		Game::canUseShaders = false;
+	}
 	message = sfg::Label::Create(L"label");
 	message->SetRequisition(vec2f(window.getSize().x-120, 0));
 	message->SetLineWrap(true);
@@ -169,7 +173,7 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 		gmgr.movePlayer(playerMovement, elapsed);
 
 		window.clear();
-		mgr.draw(window);
+		mgr.draw(window, &shader);
 		gui.Display(window);
 		window.display();
 

@@ -41,8 +41,14 @@ void Sprite::animate(sf::Time elapsed) {}
 
 void Sprite::setAnimation(Game::Animation a) {}
 
-void Sprite::draw(sf::RenderTarget& window) {
-	window.draw(*this);
+void Sprite::draw(sf::RenderTarget& window, sf::Shader* shader) {
+	if(shader != nullptr && Game::canUseShaders) {
+		shader->setUniform("texture", sf::Shader::CurrentTexture);
+		window.draw(*this, shader);
+	}
+	else {
+		window.draw(*this);
+	}
 }
 
 int Sprite::getLayer() const {
@@ -124,7 +130,7 @@ RepeatedSprite::RepeatedSprite(Texture& texture, int w, int h, vec2f posInWorld,
 
 AdditionalSprite::AdditionalSprite(Texture& texture, sf::IntRect rect, sf::Time duration, game_id id) : AnimatedSprite(texture, rect, duration, vec2f(0,0), id, 1) {}
 
-void AdditionalSprite::draw(sf::RenderTarget & window) {}
+void AdditionalSprite::draw(sf::RenderTarget& window, sf::Shader* shader) {}
 
 void AdditionalSprite::animate(sf::Time elapsed) {}
 
@@ -135,10 +141,20 @@ void SpriteSet::addAdditionalSprite(AdditionalSprite& spr) {
 	spr.setPosInWorld(getPosInWorld());
 }
 
-void SpriteSet::draw(sf::RenderTarget& window) {
-	window.draw(*this);
+void SpriteSet::draw(sf::RenderTarget& window, sf::Shader* shader) {
+	if(shader != nullptr && Game::canUseShaders) {
+		shader->setUniform("texture", sf::Shader::CurrentTexture);
+		window.draw(*this, shader);
+	} else {
+		window.draw(*this);
+	}
 	for (const AdditionalSprite* spr : sprites) {
-		window.draw(*spr);
+		if(shader != nullptr && Game::canUseShaders) {
+			shader->setUniform("texture", sf::Shader::CurrentTexture);
+			window.draw(*spr, shader);
+		} else {
+			window.draw(*spr);
+		}
 	}
 }
 
@@ -189,10 +205,17 @@ TreeSprite::TreeSprite(Texture& trunk, Texture& top, int offset, vec2f posInWorl
 	leaves.setTexture(top);
 }
 
-void TreeSprite::draw(sf::RenderTarget& window) {
-	window.draw(*this);
+void TreeSprite::draw(sf::RenderTarget& window, sf::Shader* shader) {
 	leaves.setPosition(getPosition() - vec2f(0, offset));
-	window.draw(leaves);
+	if(shader != nullptr && Game::canUseShaders) {
+		shader->setUniform("texture", sf::Shader::CurrentTexture);
+		window.draw(*this, shader);
+		shader->setUniform("texture", sf::Shader::CurrentTexture);
+		window.draw(leaves, shader);
+	} else {
+		window.draw(*this);
+		window.draw(leaves);
+	}
 }
 
 void TreeSprite::blur(bool b) {

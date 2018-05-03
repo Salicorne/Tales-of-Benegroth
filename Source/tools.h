@@ -21,6 +21,7 @@ vec2f normalize(vec2f vec);
 namespace Game {
 	extern int joystick;
 	extern int currentScreen;
+	extern bool canUseShaders;
 	const float minDistanceForAction = 100.f;
 
 	enum Screen {

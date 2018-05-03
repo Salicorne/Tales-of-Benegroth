@@ -129,12 +129,12 @@ void MemoryManager::sortSprites() {
 	spritesMutex.unlock();
 }
 
-void MemoryManager::draw(sf::RenderTarget& window) {
+void MemoryManager::draw(sf::RenderTarget& window, sf::Shader* shader) {
 	sortSprites();
 	spritesMutex.lock();
 	for (Sprite* s : sprites) {
 		s->updatePosition(windowPosition);
-		s->draw(window);
+		s->draw(window, shader);
 	}
 	spritesMutex.unlock();
 }

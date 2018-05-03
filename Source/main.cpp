@@ -48,6 +48,14 @@ int main()
 
 	srand(time(NULL));
 
+	if(!sf::Shader::isAvailable()) {
+		std::cerr << "Shaders are not available. " << std::endl;
+		Game::canUseShaders = false;
+	}
+	else {
+		Game::canUseShaders = true;
+	}
+
 	sf::RenderWindow window(sf::VideoMode(Game::Window::Width, Game::Window::Height), "SFML works!", sf::Style::Titlebar | sf::Style::Close);
 	window.setActive(false);
 	window.setKeyRepeatEnabled(false);
