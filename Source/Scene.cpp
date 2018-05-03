@@ -137,27 +137,29 @@ bool Scene::loadScene(std::string filePath, MemoryManager& mgr, GameManager& gmg
 
                 case Game::FileOp::SetPlayer:
                     {
-                        int sprite, posx, posy, id;
+                        int sprite, posx, posy, life, id;
                         float speed;
                         if(!(stream >> sprite)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
                         if(!(stream >> posx)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
                         if(!(stream >> posy)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
                         if(!(stream >> speed)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
+                        if(!(stream >> life)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
                         if(!(stream >> id)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
-                        gmgr.setPlayer(gmgr.addActor(static_cast<game_id>(sprite), vec2f(posx, posy), speed, static_cast<game_id>(id != 0 ? id : mgr.getFreeSpriteId())));                      
+                        gmgr.setPlayer(gmgr.addActor(static_cast<game_id>(sprite), vec2f(posx, posy), speed, life, static_cast<game_id>(id != 0 ? id : mgr.getFreeSpriteId())));                      
                     }
                     break;
 
                 case Game::FileOp::AddNPC:
                     {
-                        int sprite, posx, posy, id;
+                        int sprite, posx, posy, life, id;
                         float speed, locx, locy, loct;
                         if(!(stream >> sprite)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
                         if(!(stream >> posx)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
                         if(!(stream >> posy)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
                         if(!(stream >> speed)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
+                        if(!(stream >> life)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
                         if(!(stream >> id)) { std::cerr << "Malformed save file " << filePath << " at line " << i << std::endl; return false; }
-                        NPC* npc = gmgr.addNPC(static_cast<game_id>(sprite), vec2f(posx, posy), speed, static_cast<game_id>(id != 0 ? id : mgr.getFreeSpriteId()));
+                        NPC* npc = gmgr.addNPC(static_cast<game_id>(sprite), vec2f(posx, posy), speed, life, static_cast<game_id>(id != 0 ? id : mgr.getFreeSpriteId()));
                         while(stream >> locx >> locy >> loct) {
                             npc->addLocation(vec2f(locx, locy), sf::seconds(loct));
                         }

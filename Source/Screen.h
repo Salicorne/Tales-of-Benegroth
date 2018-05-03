@@ -36,6 +36,7 @@ class GameScreen : public AbstractScreen {
 		sfg::ScrolledWindow::Ptr scrollwindow;
 		sfg::Window::Ptr gwindow;
         sfg::Label::Ptr actionMessage;
+        sfg::ProgressBar::Ptr lifeBar;
 
     public:
         GameScreen(sfg::SFGUI& gui);

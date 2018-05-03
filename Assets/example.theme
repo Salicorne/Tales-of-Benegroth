@@ -2,6 +2,12 @@ Window {
 	BackgroundColor: #dd5533ff;
 }
 
+ProgressBar {
+	BackgroundColor: #330000ff;
+	BorderColor: #00000000;
+	BarColor: #ff0000ff;
+}
+
 * {
 	FontName: Assets/Onciale PhF01.ttf;
 	FontSize: 20;

@@ -1,6 +1,6 @@
 #include "Actor.h"
 
-Actor::Actor(SpriteSet* sprite, vec2f pos, float speed, game_id id) : sprite(sprite), posInWorld(pos), speed(speed), id(id), possibleInteraction(false) {
+Actor::Actor(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id) : sprite(sprite), posInWorld(pos), speed(speed), maxLife(life), life(life), id(id), possibleInteraction(false) {
 	sprite->setPosInWorld(pos);
 	direction = Game::Direction::South;
 }
@@ -8,6 +8,10 @@ Actor::Actor(SpriteSet* sprite, vec2f pos, float speed, game_id id) : sprite(spr
 bool Actor::canHaveInteraction() {
 	return possibleInteraction;
 }
+
+int Actor::getLife() { return life; }
+
+int Actor::getMaxLife() { return maxLife; }
 
 void Actor::move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm) {
 	delta = normalize(delta);
@@ -45,7 +49,7 @@ SpriteSet* Actor::getSpriteSet() {
 	return sprite;
 }
 
-NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id) : Actor(sprite, pos, speed, id), currentLocation(0) {
+NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id) : Actor(sprite, pos, speed, life, id), currentLocation(0) {
 	possibleInteraction = true;
 }
 

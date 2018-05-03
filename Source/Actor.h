@@ -19,11 +19,15 @@ class Actor {
 		float speed;
 		Game::Direction direction;
 		bool possibleInteraction;
+		int maxLife;
+		int life;
 
 	public:
-		Actor(SpriteSet* sprite, vec2f pos, float speed, game_id id);
+		Actor(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id);
 		SpriteSet* getSpriteSet();
 		bool canHaveInteraction();
+		int getLife();
+		int getMaxLife();
 		virtual std::string getInteractionMessage();
 		virtual void move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm);
 		virtual void moveTo(vec2f pos, sf::Time elapsed, AbstractCollisionsManager& acm);
@@ -38,7 +42,7 @@ class NPC : public Actor {
 		sf::Time locationCounter;
 		
 	public:
-		NPC(SpriteSet* sprite, vec2f pos, float speed, game_id id);
+		NPC(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id);
 		virtual void action(sf::Time elapsed, AbstractCollisionsManager& acm);
 		virtual void addLocation(vec2f p, sf::Time t);
 		virtual std::string getInteractionMessage();

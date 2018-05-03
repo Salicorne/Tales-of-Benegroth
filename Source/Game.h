@@ -21,10 +21,11 @@ class GameManager : public AbstractInteractionProvider, public AbstractCollision
 		GameManager(MemoryManager& mgr, sf::Window& window);
 		~GameManager();
 		Actor* getPlayer();
-		Actor* addActor(game_id sprite, vec2f pos, float speed, game_id id);
-		NPC* addNPC(game_id sprite, vec2f pos, float speed, game_id id);
+		Actor* addActor(game_id sprite, vec2f pos, float speed, int life, game_id id);
+		NPC* addNPC(game_id sprite, vec2f pos, float speed, int life, game_id id);
 		void setPlayer(Actor* a);
 		void addCollision(sf::FloatRect c);
+		float getPlayerLifeRatio();
 
 		void movePlayer(vec2f delta, sf::Time elapsed);
 		void updateActionMessage();

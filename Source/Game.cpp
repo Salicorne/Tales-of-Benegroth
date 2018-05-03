@@ -17,14 +17,14 @@ Actor * GameManager::getPlayer() {
 	return player;
 }
 
-Actor* GameManager::addActor(game_id sprite, vec2f pos, float speed, game_id id) {
-	Actor* a = new Actor(static_cast<SpriteSet*>(&mgr.getSprite(sprite)), pos, speed, id);
+Actor* GameManager::addActor(game_id sprite, vec2f pos, float speed, int life, game_id id) {
+	Actor* a = new Actor(static_cast<SpriteSet*>(&mgr.getSprite(sprite)), pos, speed, life, id);
 	actors.push_back(a);
 	return a;
 }
 
-NPC * GameManager::addNPC(game_id sprite, vec2f pos, float speed, game_id id) {
-	NPC* a = new NPC(static_cast<SpriteSet*>(&mgr.getSprite(sprite)), pos, speed, id);
+NPC * GameManager::addNPC(game_id sprite, vec2f pos, float speed, int life, game_id id) {
+	NPC* a = new NPC(static_cast<SpriteSet*>(&mgr.getSprite(sprite)), pos, speed, life, id);
 	actors.push_back(a);
 	return a;
 }
@@ -35,6 +35,10 @@ void GameManager::setPlayer(Actor * a) {
 
 void GameManager::addCollision(sf::FloatRect c) {
 	collisions.push_back(c);
+}
+
+float GameManager::getPlayerLifeRatio() {
+	return player == nullptr ? 0.f : player->getLife() / (float)player->getMaxLife();
 }
 
 void GameManager::movePlayer(vec2f delta, sf::Time elapsed) {

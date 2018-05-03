@@ -87,6 +87,9 @@ void GameScreen::setUp(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& 
 	messageBox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 50.0f);
 	messageBox->Pack(message);
 	messageBox->Pack(closeMessageButton);
+	lifeBar = sfg::ProgressBar::Create(sfg::ProgressBar::Orientation::HORIZONTAL);
+	lifeBar->SetRequisition(vec2f(300, 20));
+	lifeBar->SetPosition(vec2f(30, 30));
 
 	scrollwindow = sfg::ScrolledWindow::Create();
 	scrollwindow->SetScrollbarPolicy(sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
@@ -102,6 +105,7 @@ void GameScreen::setUp(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& 
 
 	desktop.Add(gwindow);
 	desktop.Add(actionMessage);
+	desktop.Add(lifeBar);
 	desktop.LoadThemeFromFile("Assets/example.theme");
 	next = -2;
 
@@ -142,6 +146,7 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 			}
 		}
 		setActionMessage(gmgr.getActionMessage());
+		lifeBar->SetFraction(gmgr.getPlayerLifeRatio());
 		desktop.Update(elapsed.asSeconds());
 
 
@@ -177,6 +182,7 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 void GameScreen::cleanup() {
 	gwindow->Show(false);
 	actionMessage->Show(false);
+	lifeBar->Show(false);
 }
 
 void GameScreen::showMessage(std::string sender, std::string message) {
