@@ -69,6 +69,10 @@ vec2f Sprite::getPosInWorld() const {
 	return posInWorld;
 }
 
+int Sprite::getFeetOffset()	const {
+	return feetOffset;
+}
+
 void Sprite::blurs(bool b) { mustBlur = b; }
 
 bool Sprite::blurs() {

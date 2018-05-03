@@ -97,7 +97,7 @@ vec2f MemoryManager::getWindowPos() {
 void MemoryManager::updateBlur(vec2f playerPos) {
 	spritesMutex.lock();
 	for (Sprite* spr : sprites) {
-		if (spr->blurs()) { spr->blur(spr->getGlobalBounds().contains(playerPos - windowPosition)); }
+		if (spr->blurs()) { spr->blur(sf::FloatRect(spr->getGlobalBounds().left, spr->getGlobalBounds().top, spr->getGlobalBounds().width, spr->getGlobalBounds().height - spr->getFeetOffset()).contains(playerPos - windowPosition)); }
 	}
 	spritesMutex.unlock();
 }

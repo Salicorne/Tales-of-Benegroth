@@ -32,6 +32,7 @@ class Sprite : public sf::Sprite {
 		vec2f getFeetPos() const;
 		vec2f getHeadPos() const;
 		vec2f getPosInWorld() const;
+		int getFeetOffset() const;
 		void blurs(bool b);
 		bool blurs();
 
