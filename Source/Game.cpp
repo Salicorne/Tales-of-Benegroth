@@ -1,7 +1,7 @@
 #include "Game.h"
 
 
-GameManager::GameManager(MemoryManager& mgr, sf::Window& window) : mgr(mgr), window(window) {
+GameManager::GameManager(MemoryManager& mgr, sf::Window& window) : mgr(mgr), window(window), timeOfDay(12.0) {
 	player = nullptr;
 	target = nullptr;
 	showMessageFunction = [](std::string, std::string){};
@@ -115,6 +115,14 @@ void GameManager::interact() {
 		target->interact(this);
 		actorsMutex.unlock();
 	}
+}
+
+void GameManager::updateTimeOfDay(float delta) {
+	timeOfDay = fmod(timeOfDay + delta, 24.f);
+}
+
+float GameManager::getTimeOfDay() {
+	return timeOfDay;
 }
 
 void GameManager::setShowMessageFunction(std::function<void(std::string, std::string)> fun) {

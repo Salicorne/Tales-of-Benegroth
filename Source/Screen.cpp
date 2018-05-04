@@ -156,7 +156,6 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 		lifeBar->SetFraction(gmgr.getPlayerLifeRatio());
 		desktop.Update(elapsed.asSeconds());
 
-
 		playerMovement = vec2f(0, 0);
 
 		sf::Joystick::update();
@@ -174,6 +173,8 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 
 
 		gmgr.movePlayer(playerMovement, elapsed);
+
+		shader.setUniform("time", gmgr.getTimeOfDay());
 
 		window.clear();
 		mgr.draw(window, &shader);

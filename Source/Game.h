@@ -14,6 +14,7 @@ class GameManager : public AbstractInteractionProvider, public AbstractCollision
 		std::mutex actionMessageMutex;
 		std::mutex actorsMutex;
 		std::mutex collisionsMutex;
+		float timeOfDay;
 		
 		//Inheritance
 		std::function<void(std::string, std::string)> showMessageFunction; 
@@ -35,6 +36,8 @@ class GameManager : public AbstractInteractionProvider, public AbstractCollision
 		std::string getActionMessage();
 		void playActors(sf::Time elapsed);
 		void interact();
+		void updateTimeOfDay(float delta);
+		float getTimeOfDay();
 
 		//Inheritance
 		void setShowMessageFunction(std::function<void(std::string, std::string)> fun);
