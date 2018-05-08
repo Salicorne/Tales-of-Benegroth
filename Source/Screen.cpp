@@ -96,6 +96,8 @@ void GameScreen::setUp(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& 
 	lifeBar->SetPosition(vec2f(30, 30));
 
 	buildInventory(gmgr);
+	inventory->Show(false);
+	inventoryVisible = false;
 
 	scrollwindow = sfg::ScrolledWindow::Create();
 	scrollwindow->SetScrollbarPolicy(sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
@@ -151,6 +153,10 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 				}
 				if (event.key.code == sf::Keyboard::O) {
 					Scene::loadScene("save2.dat", mgr, gmgr);
+				}
+				if (event.key.code == sf::Keyboard::I) {
+					inventoryVisible = !inventoryVisible;
+					inventory->Show(inventoryVisible);
 				}
 			}
 		}

@@ -39,6 +39,7 @@ class GameScreen : public AbstractScreen {
         sfg::ProgressBar::Ptr lifeBar;
         sfg::Box::Ptr inventory;
         sf::Shader shader;
+        bool inventoryVisible;
 
     public:
         GameScreen(sfg::SFGUI& gui);
