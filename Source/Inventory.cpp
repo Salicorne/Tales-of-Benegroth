@@ -1,6 +1,6 @@
 #include "Inventory.h"
 
-Item::Item(std::string name, std::string icon, game_id id, bool consumes) : name(name), id(id), consumes(consumes) {
+Item::Item(std::string name, std::string description, std::string icon, game_id id, bool consumes) : name(name), description(description), id(id), consumes(consumes) {
     if(!image.loadFromFile(icon)) {
         image.create(64, 64);
     }
@@ -9,6 +9,16 @@ Item::Item(std::string name, std::string icon, game_id id, bool consumes) : name
 game_id Item::getId() const { return id; }
 
 sf::Image& Item::getImage() { return image; }
+
+
+std::string Item::getName() {
+    return name;
+}
+
+std::string Item::getDescription() {
+    return description;
+}
+
 
 bool Item::consumesOnUse() const { return consumes; }
 
@@ -74,12 +84,20 @@ void Inventory::useItem(game_id id, AbstractItemInteractionProvider* itp) {
 
 Item* Inventory::allocNewItem(game_id id) {
     switch(id) {
+        case 10: return new TeleportationOrb();
         default: return new DefaultItem();
     }
 }
 
-DefaultItem::DefaultItem() : Item("default", "Assets/redorb.png", 0, true) {}
+DefaultItem::DefaultItem() : Item("default", "This is a sample item", "Assets/redorb.png", 0, true) {}
 
 void DefaultItem::use(AbstractItemInteractionProvider* itp) {
     std::cout << "Using default item" << std::endl;
+}
+
+
+TeleportationOrb::TeleportationOrb() : Item("Orbe de téléportation", "Cet orbe vous teleporte au point de coordonnees (0;0). ", "Assets/redorb.png", 1, true) {}
+
+void TeleportationOrb::use(AbstractItemInteractionProvider* itp) {
+
 }

@@ -44,7 +44,6 @@ class GameManager : public AbstractInteractionProvider, public AbstractCollision
 		//Inheritance
 		void setShowMessageFunction(std::function<void(std::string, std::string)> fun);
 		virtual void showMessage(std::string sender, std::string message);
-
 		virtual bool collides(vec2f point);
 };
 

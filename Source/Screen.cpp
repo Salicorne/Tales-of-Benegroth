@@ -99,6 +99,12 @@ void GameScreen::setUp(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& 
 	inventory->Show(false);
 	inventoryVisible = false;
 
+	inventoryHelperText = sfg::Label::Create("Here will be the selected item description");
+	inventoryHelperText->SetLineWrap(true);
+	inventoryHelper = sfg::Window::Create(sfg::Window::Style::BACKGROUND);
+	inventoryHelper->Add(inventoryHelperText);
+	inventoryHelper->Show(false);
+
 	scrollwindow = sfg::ScrolledWindow::Create();
 	scrollwindow->SetScrollbarPolicy(sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
 	scrollwindow->AddWithViewport(messageBox);
@@ -114,6 +120,7 @@ void GameScreen::setUp(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& 
 	desktop.Add(gwindow);
 	desktop.Add(actionMessage);
 	desktop.Add(lifeBar);
+	desktop.Add(inventoryHelper);
 	desktop.LoadThemeFromFile("Assets/example.theme");
 	next = -2;
 
@@ -200,6 +207,7 @@ void GameScreen::cleanup() {
 	actionMessage->Show(false);
 	lifeBar->Show(false);
 	inventory->Show(false);
+	inventoryHelper->Show(false);
 }
 
 void GameScreen::showMessage(std::string sender, std::string message) {
@@ -228,7 +236,13 @@ void GameScreen::buildInventory(GameManager& gmgr) {
 				auto img = sfg::Image::Create(currentItem->getImage());
 				auto btn = sfg::Button::Create();
 				btn->SetImage(img);
-				btn->GetSignal(sfg::Widget::OnLeftClick).Connect([currentItem, &ivt, &gmgr, this](){ivt.useItem(currentItem->getId(), &gmgr); this->buildInventory(gmgr);});
+				btn->GetSignal(sfg::Widget::OnLeftClick).Connect([currentItem, &ivt, &gmgr, this]() {
+					ivt.useItem(currentItem->getId(), &gmgr); 
+					this->buildInventory(gmgr);
+				});
+				btn->GetSignal(sfg::Widget::OnMouseEnter).Connect([this, currentItem]() {
+					setInventoryHelperText(currentItem->getDescription());
+				});
 				b->Pack(btn, false, false);
 			}
 			else {
@@ -236,12 +250,26 @@ void GameScreen::buildInventory(GameManager& gmgr) {
 					auto img = sfg::Image::Create(icon);
 					auto btn = sfg::Button::Create();
 					btn->SetImage(img);
+					btn->GetSignal(sfg::Widget::OnMouseEnter).Connect([this]() {
+						inventoryHelper->Show(false);
+					});
 					b->Pack(btn, false, false);
 				}
 			}
 		}
 		inventory->Pack(b, false);
 	}
-	inventory->SetPosition(vec2f(Game::Window::Width - inventory->GetAllocation().width - 20, Game::Window::Height/2.0));
+	inventory->GetSignal(sfg::Widget::OnMouseLeave).Connect([this]() {
+		inventoryHelper->Show(false);
+	});
+	inventory->SetPosition(vec2f(Game::Window::Width - inventory->GetAllocation().width - 40, Game::Window::Height/2.0));
 	desktop.Add(inventory);
+}
+
+void GameScreen::setInventoryHelperText(std::string text) {
+	inventoryHelperText->SetText(text);
+	inventoryHelper->SetRequisition(vec2f(inventory->GetAllocation().width+40, 0.f));
+	inventoryHelperText->SetRequisition(vec2f(inventory->GetAllocation().width+20, 0.f));
+	inventoryHelper->SetPosition(vec2f(inventory->GetAllocation().left - 20, inventory->GetAllocation().top - inventoryHelper->GetAllocation().height));
+	inventoryHelper->Show(true);
 }

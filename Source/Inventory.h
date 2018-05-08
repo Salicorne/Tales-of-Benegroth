@@ -9,14 +9,17 @@ class AbstractItemInteractionProvider {
 class Item {
     protected:
         std::string name;
+        std::string description;
         sf::Image image;
         game_id id;
         bool consumes;
 
     public:
-        Item(std::string name, std::string icon, game_id id, bool consumes);
+        Item(std::string name, std::string description, std::string icon, game_id id, bool consumes);
         game_id getId() const;
         sf::Image& getImage();
+        std::string getName();
+        std::string getDescription();
         bool consumesOnUse() const;
         virtual void use(AbstractItemInteractionProvider*) = 0;
 };
@@ -42,5 +45,11 @@ class Inventory {
 class DefaultItem : public Item {
     public:
         DefaultItem();
+        void use(AbstractItemInteractionProvider* itp);
+};
+
+class TeleportationOrb : public Item {
+    public: 
+        TeleportationOrb();
         void use(AbstractItemInteractionProvider* itp);
 };

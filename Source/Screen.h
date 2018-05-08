@@ -38,6 +38,8 @@ class GameScreen : public AbstractScreen {
         sfg::Label::Ptr actionMessage;
         sfg::ProgressBar::Ptr lifeBar;
         sfg::Box::Ptr inventory;
+        sfg::Window::Ptr inventoryHelper;
+        sfg::Label::Ptr inventoryHelperText;
         sf::Shader shader;
         bool inventoryVisible;
 
@@ -49,4 +51,5 @@ class GameScreen : public AbstractScreen {
 		void showMessage(std::string sender, std::string message);
         void setActionMessage(std::string message);
         void buildInventory(GameManager& gmgr);
+        void setInventoryHelperText(std::string text);
 };
