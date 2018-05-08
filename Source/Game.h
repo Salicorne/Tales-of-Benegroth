@@ -1,9 +1,9 @@
 #pragma once
-#include "Memory.h"
+#include "Inventory.h"
 #include <SFGUI/SFGUI.hpp>
 #include <SFGUI/Widgets.hpp>
 
-class GameManager : public AbstractInteractionProvider, public AbstractCollisionsManager {
+class GameManager : public AbstractInteractionProvider, public AbstractCollisionsManager, public AbstractItemInteractionProvider {
 	protected:
 		MemoryManager& mgr;
 		std::vector<Actor*> actors;
@@ -15,6 +15,7 @@ class GameManager : public AbstractInteractionProvider, public AbstractCollision
 		std::mutex actorsMutex;
 		std::mutex collisionsMutex;
 		float timeOfDay;
+		Inventory inventory;
 		
 		//Inheritance
 		std::function<void(std::string, std::string)> showMessageFunction; 
@@ -38,6 +39,7 @@ class GameManager : public AbstractInteractionProvider, public AbstractCollision
 		void interact();
 		void updateTimeOfDay(float delta);
 		float getTimeOfDay();
+		Inventory& getInventory();
 
 		//Inheritance
 		void setShowMessageFunction(std::function<void(std::string, std::string)> fun);

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "tools.h"
 
 class Texture : public sf::Texture {

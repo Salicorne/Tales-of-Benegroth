@@ -37,6 +37,7 @@ class GameScreen : public AbstractScreen {
 		sfg::Window::Ptr gwindow;
         sfg::Label::Ptr actionMessage;
         sfg::ProgressBar::Ptr lifeBar;
+        sfg::Box::Ptr inventory;
         sf::Shader shader;
 
     public:
@@ -46,4 +47,5 @@ class GameScreen : public AbstractScreen {
 		virtual void cleanup();
 		void showMessage(std::string sender, std::string message);
         void setActionMessage(std::string message);
+        void buildInventory(GameManager& gmgr);
 };

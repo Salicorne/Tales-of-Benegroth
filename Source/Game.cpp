@@ -1,10 +1,13 @@
 #include "Game.h"
 
 
-GameManager::GameManager(MemoryManager& mgr, sf::Window& window) : mgr(mgr), window(window), timeOfDay(12.0) {
+GameManager::GameManager(MemoryManager& mgr, sf::Window& window) : mgr(mgr), window(window), timeOfDay(12.0), inventory(25) {
 	player = nullptr;
 	target = nullptr;
 	showMessageFunction = [](std::string, std::string){};
+	inventory.addItem(10);
+	inventory.addItem(20);
+	inventory.addItem(30);
 }
 
 GameManager::~GameManager() {
@@ -123,6 +126,10 @@ void GameManager::updateTimeOfDay(float delta) {
 
 float GameManager::getTimeOfDay() {
 	return timeOfDay;
+}
+
+Inventory& GameManager::getInventory() {
+	return inventory;
 }
 
 void GameManager::setShowMessageFunction(std::function<void(std::string, std::string)> fun) {

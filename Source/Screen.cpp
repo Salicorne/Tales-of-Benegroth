@@ -95,6 +95,8 @@ void GameScreen::setUp(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& 
 	lifeBar->SetRequisition(vec2f(300, 20));
 	lifeBar->SetPosition(vec2f(30, 30));
 
+	buildInventory(gmgr);
+
 	scrollwindow = sfg::ScrolledWindow::Create();
 	scrollwindow->SetScrollbarPolicy(sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
 	scrollwindow->AddWithViewport(messageBox);
@@ -191,6 +193,7 @@ void GameScreen::cleanup() {
 	gwindow->Show(false);
 	actionMessage->Show(false);
 	lifeBar->Show(false);
+	inventory->Show(false);
 }
 
 void GameScreen::showMessage(std::string sender, std::string message) {
@@ -202,4 +205,37 @@ void GameScreen::showMessage(std::string sender, std::string message) {
 
 void GameScreen::setActionMessage(std::string message) {
 	this->actionMessage->SetText(message);
+}
+
+void GameScreen::buildInventory(GameManager& gmgr) {
+	desktop.Remove(inventory);
+	inventory = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+	Inventory& ivt = gmgr.getInventory();
+	auto lst = ivt.getItems();
+	int inventoryRows = 5, inventoryCols = 5;
+	for(int i = 0; i<inventoryRows; i++) {
+		auto b = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
+		for(int j = 0; j<inventoryCols; j++) {
+			sf::Image icon;
+			if(i * inventoryRows + j < lst.size()) {
+				Item* currentItem = lst.at(i * inventoryRows + j).second;
+				auto img = sfg::Image::Create(currentItem->getImage());
+				auto btn = sfg::Button::Create();
+				btn->SetImage(img);
+				btn->GetSignal(sfg::Widget::OnLeftClick).Connect([currentItem, &ivt, &gmgr, this](){ivt.useItem(currentItem->getId(), &gmgr); this->buildInventory(gmgr);});
+				b->Pack(btn, false, false);
+			}
+			else {
+				if(icon.loadFromFile("Assets/orb.png")) {
+					auto img = sfg::Image::Create(icon);
+					auto btn = sfg::Button::Create();
+					btn->SetImage(img);
+					b->Pack(btn, false, false);
+				}
+			}
+		}
+		inventory->Pack(b, false);
+	}
+	inventory->SetPosition(vec2f(Game::Window::Width - inventory->GetAllocation().width - 20, Game::Window::Height/2.0));
+	desktop.Add(inventory);
 }
