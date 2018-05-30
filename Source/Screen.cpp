@@ -164,6 +164,7 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 				if (event.key.code == sf::Keyboard::I) {
 					inventoryVisible = !inventoryVisible;
 					inventory->Show(inventoryVisible);
+					if (!inventoryVisible) { inventoryHelper->Show(false); }
 				}
 			}
 		}
