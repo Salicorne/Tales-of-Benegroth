@@ -40,6 +40,9 @@ class GameManager : public AbstractInteractionProvider, public AbstractCollision
 		void updateTimeOfDay(float delta);
 		float getTimeOfDay();
 		Inventory& getInventory();
+		std::vector<Actor*> getActorsInRange(vec2f point, float radius);
+
+		void attack1();
 
 		//Inheritance
 		void setShowMessageFunction(std::function<void(std::string, std::string)> fun);

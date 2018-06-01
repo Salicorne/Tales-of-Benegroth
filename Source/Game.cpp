@@ -132,6 +132,25 @@ Inventory& GameManager::getInventory() {
 	return inventory;
 }
 
+std::vector<Actor*> GameManager::getActorsInRange(vec2f point, float radius) {
+	std::vector<Actor*> res;
+	for (Actor* a : actors) {
+		if (norm(a->getSpriteSet()->getFeetPos() - point) <= radius) {
+			res.push_back(a);
+		}
+	}
+	return res;
+}
+
+void GameManager::attack1() {
+	auto act = getActorsInRange(getPlayer()->getSpriteSet()->getFeetPos(), 100);
+	for (Actor* a : act) {
+		if (a != getPlayer()) {
+			a->getDamage(30);
+		}
+	}
+}
+
 void GameManager::setShowMessageFunction(std::function<void(std::string, std::string)> fun) {
 	showMessageFunction = fun;
 }

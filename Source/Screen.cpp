@@ -161,6 +161,9 @@ int GameScreen::run(MemoryManager& mgr, GameManager& gmgr, sf::RenderWindow& win
 				if (event.key.code == sf::Keyboard::O) {
 					Scene::loadScene("save2.dat", mgr, gmgr);
 				}
+				if (event.key.code == sf::Keyboard::M) {
+					gmgr.attack1();
+				}
 				if (event.key.code == sf::Keyboard::I) {
 					inventoryVisible = !inventoryVisible;
 					inventory->Show(inventoryVisible);

@@ -28,6 +28,7 @@ class Actor {
 		bool canHaveInteraction();
 		int getLife();
 		int getMaxLife();
+		void getDamage(int baseDamage);
 		virtual std::string getInteractionMessage();
 		virtual void move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm);
 		virtual void moveTo(vec2f pos, sf::Time elapsed, AbstractCollisionsManager& acm);

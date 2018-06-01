@@ -13,6 +13,11 @@ int Actor::getLife() { return life; }
 
 int Actor::getMaxLife() { return maxLife; }
 
+void Actor::getDamage(int baseDamage) {
+	//todo: add modifiers
+	this->life = std::max(this->life - baseDamage, 0);
+}
+
 void Actor::move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm) {
 	delta = normalize(delta);
 	delta *= speed;
@@ -54,7 +59,7 @@ NPC::NPC(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id) : Acto
 }
 
 void NPC::action(sf::Time elapsed, AbstractCollisionsManager& acm) {
-	if(locations.size() > 0) {
+	if(locations.size() > 0 && life > 0) {
 		if(norm(vec2f(posInWorld.x - locations.at(currentLocation).first.x, posInWorld.y - locations.at(currentLocation).first.y)) < 1) {
 			// NPC is standing in a location spot
 			locationCounter -= elapsed;
