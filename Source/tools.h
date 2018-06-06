@@ -58,7 +58,8 @@ namespace Game {
 		SetLayer = 21, 
 		SetBlur = 22, 
 		SetPlayer = 23, 
-		AddNPC = 24
+		AddNPC = 24, 
+		AddMob = 25
 	};
 
 	namespace Window {

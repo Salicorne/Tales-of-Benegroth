@@ -13,9 +13,10 @@ int Actor::getLife() { return life; }
 
 int Actor::getMaxLife() { return maxLife; }
 
-void Actor::getDamage(int baseDamage) {
+int Actor::getDamage(int baseDamage, Actor* sender) {
 	//todo: add modifiers
 	this->life = std::max(this->life - baseDamage, 0);
+	return baseDamage;
 }
 
 void Actor::move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm) {
@@ -91,3 +92,35 @@ void NPC::addLocation(vec2f p, sf::Time t) {
 	}
 	locations.push_back(std::pair<vec2f, sf::Time>(p, t));
 }
+
+void AttackableActor::print() {
+	std::cout << "-----------------" << std::endl;
+	for (auto& a : threatTable) {
+		std::cout << a.first << " : " << a.second << std::endl;
+	}
+	std::cout << "life : " << life << std::endl;
+	std::cout << "-----------------" << std::endl;
+}
+
+AttackableActor::AttackableActor(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id) : Actor(sprite, pos, speed, life, id) {}
+
+int AttackableActor::getDamage(int baseDamage, Actor* sender) {
+	int realDamage = Actor::getDamage(baseDamage, sender);
+	// Update existing target
+	threatTableMutex.lock();
+	for (auto& a : threatTable) {
+		if (a.first == sender) {
+			a.second += realDamage;
+			threatTableMutex.unlock();
+			print();
+			return realDamage;
+		}
+	}
+	// Insert target
+	threatTable.push_back(std::make_pair(sender, realDamage));
+	threatTableMutex.unlock();
+	print();
+	return realDamage;
+}
+
+Mob::Mob(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id) : AttackableActor(sprite, pos, speed, life, id) {}

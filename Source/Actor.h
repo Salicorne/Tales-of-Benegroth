@@ -28,7 +28,7 @@ class Actor {
 		bool canHaveInteraction();
 		int getLife();
 		int getMaxLife();
-		void getDamage(int baseDamage);
+		virtual int getDamage(int baseDamage, Actor* sender);
 		virtual std::string getInteractionMessage();
 		virtual void move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm);
 		virtual void moveTo(vec2f pos, sf::Time elapsed, AbstractCollisionsManager& acm);
@@ -48,5 +48,21 @@ class NPC : public Actor {
 		virtual void addLocation(vec2f p, sf::Time t);
 		virtual std::string getInteractionMessage();
 		virtual void interact(AbstractInteractionProvider* aip);
+};
+
+class AttackableActor : public Actor {
+	protected:
+		std::vector<std::pair<Actor*, int>> threatTable;
+		sf::Mutex threatTableMutex;
+		void print();
+
+	public:
+		AttackableActor(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id);
+		virtual int getDamage(int baseDamage, Actor* sender);
+};
+
+class Mob : public AttackableActor {
+	public:
+		Mob(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id);
 };
 

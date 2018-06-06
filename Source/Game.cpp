@@ -28,6 +28,14 @@ Actor* GameManager::addActor(game_id sprite, vec2f pos, float speed, int life, g
 	return a;
 }
 
+Mob* GameManager::addMob(game_id sprite, vec2f pos, float speed, int life, game_id id) {
+	Mob* a = new Mob(static_cast<SpriteSet*>(&mgr.getSprite(sprite)), pos, speed, life, id);
+	actorsMutex.lock();
+	actors.push_back(a);
+	actorsMutex.unlock();
+	return a;
+}
+
 NPC * GameManager::addNPC(game_id sprite, vec2f pos, float speed, int life, game_id id) {
 	NPC* a = new NPC(static_cast<SpriteSet*>(&mgr.getSprite(sprite)), pos, speed, life, id);
 	actorsMutex.lock();
@@ -146,7 +154,7 @@ void GameManager::attack1() {
 	auto act = getActorsInRange(getPlayer()->getSpriteSet()->getFeetPos(), 100);
 	for (Actor* a : act) {
 		if (a != getPlayer()) {
-			a->getDamage(30);
+			a->getDamage(30, player);
 		}
 	}
 }
