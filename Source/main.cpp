@@ -68,7 +68,7 @@ int main()
 		Game::canUseShaders = true;
 	}
 
-	sf::RenderWindow window(sf::VideoMode(Game::Window::Width, Game::Window::Height), "SFML works!", sf::Style::Titlebar | sf::Style::Close);
+	sf::RenderWindow window(sf::VideoMode(Game::Window::Width, Game::Window::Height), "Tales of Benegroth - pre-alpha", sf::Style::Titlebar | sf::Style::Close);
 	window.setActive(false);
 	window.setKeyRepeatEnabled(false);
 	window.setMouseCursorVisible(true);
