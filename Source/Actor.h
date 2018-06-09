@@ -28,6 +28,7 @@ class Actor {
 		bool canHaveInteraction();
 		int getLife();
 		int getMaxLife();
+		bool isAlive();
 		virtual int getDamage(int baseDamage, Actor* sender);
 		virtual std::string getInteractionMessage();
 		virtual void move(vec2f delta, sf::Time elapsed, AbstractCollisionsManager& acm);
@@ -59,10 +60,22 @@ class AttackableActor : public Actor {
 	public:
 		AttackableActor(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id);
 		virtual int getDamage(int baseDamage, Actor* sender);
+		Actor* getTarget();
 };
 
 class Mob : public AttackableActor {
+	protected:
+		Game::MobAction currentAction;
+		sf::Time clock;
+		vec2f initialPos;
+		vec2f randomPos;
+		Game::MobAction chooseAttack();
+		virtual void onIdle(sf::Time elapsed, AbstractCollisionsManager& acm);
+		virtual void onAttack1(sf::Time elapsed, AbstractCollisionsManager& acm);
+		void forgetTarget();
+
 	public:
 		Mob(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id);
+		virtual void action(sf::Time elapsed, AbstractCollisionsManager& acm);
 };
 

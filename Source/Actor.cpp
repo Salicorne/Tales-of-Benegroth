@@ -13,6 +13,10 @@ int Actor::getLife() { return life; }
 
 int Actor::getMaxLife() { return maxLife; }
 
+bool Actor::isAlive() {
+	return life > 0;
+}
+
 int Actor::getDamage(int baseDamage, Actor* sender) {
 	//todo: add modifiers
 	this->life = std::max(this->life - baseDamage, 0);
@@ -69,12 +73,8 @@ void NPC::action(sf::Time elapsed, AbstractCollisionsManager& acm) {
 				currentLocation = (currentLocation + 1) % locations.size();
 				locationCounter = locations.at(currentLocation).second;
 			}
-			move(vec2f(0,0), elapsed, acm);
 		}
-		else {
-			// Move
-			moveTo(locations.at(currentLocation).first, elapsed, acm);
-		}
+		moveTo(locations.at(currentLocation).first, elapsed, acm);
 	}
 }
 
@@ -123,4 +123,106 @@ int AttackableActor::getDamage(int baseDamage, Actor* sender) {
 	return realDamage;
 }
 
-Mob::Mob(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id) : AttackableActor(sprite, pos, speed, life, id) {}
+Actor* AttackableActor::getTarget() {
+	int maxThreat = 0;
+	Actor* target = nullptr;
+	int i = 0, j = 0;
+	threatTableMutex.lock();
+	for (auto& a : threatTable) {
+		if (a.second > maxThreat) {
+			target = a.first;
+			maxThreat = a.second;
+			j = i;
+		}
+		i++;
+	}
+	threatTableMutex.unlock();
+	if (target != nullptr && !target->isAlive()) {
+		threatTableMutex.lock();
+		threatTable.erase(threatTable.begin() + j);
+		threatTableMutex.unlock();
+		target = getTarget();
+	}
+	return target;
+}
+
+Game::MobAction Mob::chooseAttack() {
+	return Game::MobAction::Attack1;
+}
+
+Mob::Mob(SpriteSet* sprite, vec2f pos, float speed, int life, game_id id) : AttackableActor(sprite, pos, speed, life, id), currentAction(Game::MobAction::Idle), initialPos(pos), randomPos(pos) {}
+
+void Mob::onIdle(sf::Time elapsed, AbstractCollisionsManager& acm) {
+	vec2f pos = this->getSpriteSet()->getPosInWorld();
+	if (norm(randomPos - pos) < 10.f) {
+		clock += elapsed;
+	}
+	moveTo(randomPos, elapsed, acm);
+	if (clock >= sf::seconds(5)) {
+		int range = 200;
+		randomPos = vec2f(initialPos.x - range / 2.f + rand() % range, initialPos.y - range / 2.f + rand() % range);
+		std::cout << "Moving to " << randomPos.x << ";" << randomPos.y << std::endl;
+		clock = sf::Time::Zero;
+	}
+
+	// React if the mob is attacked
+	Actor* target = getTarget();
+	if (target != nullptr) {
+		currentAction = chooseAttack();
+		clock = sf::Time::Zero;
+	}
+}
+
+void Mob::onAttack1(sf::Time elapsed, AbstractCollisionsManager& acm) {
+	Actor* target = getTarget();
+	vec2f pos = this->getSpriteSet()->getPosInWorld();
+	if (target != nullptr) {
+		vec2f targetPos = target->getSpriteSet()->getPosInWorld();
+		if (norm(pos - targetPos) > 500.f) {
+			// Reset
+			forgetTarget();
+		}
+		// Move
+		if (norm(targetPos - pos) > 100.f) {
+			moveTo(targetPos, elapsed, acm);
+		}
+		// Attack
+		else {
+			moveTo(pos, elapsed, acm);
+		}
+	}
+	else { currentAction = Game::MobAction::Idle; }
+}
+
+void Mob::forgetTarget() {
+	Actor* target = getTarget();
+	threatTableMutex.lock();
+	if (target != nullptr) {
+		int i = 0;
+		for (auto& a : threatTable) {
+			if (a.first == target) {
+				threatTable.erase(threatTable.begin() + i);
+				threatTableMutex.unlock();
+				return;
+			}
+			i++;
+		}
+	}
+	threatTableMutex.unlock();
+}
+
+void Mob::action(sf::Time elapsed, AbstractCollisionsManager& acm) {
+	switch (currentAction) {
+		case Game::MobAction::Idle:
+		{
+			onIdle(elapsed, acm);
+			break;
+		}
+		case Game::MobAction::Attack1:
+		{
+			onAttack1(elapsed, acm);
+			break;
+		}
+	}
+	//print();
+}

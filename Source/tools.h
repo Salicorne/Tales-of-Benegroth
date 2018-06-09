@@ -62,6 +62,12 @@ namespace Game {
 		AddMob = 25
 	};
 
+	enum MobAction {
+		Unknown, 
+		Idle, 
+		Attack1
+	};
+
 	namespace Window {
 		extern int Width;
 		extern int Height;
