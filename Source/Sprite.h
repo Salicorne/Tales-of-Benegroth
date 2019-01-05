@@ -20,8 +20,8 @@ class SubSprite {
         sf::RectangleShape shape;
 
     public: 
-        SubSprite(vec parentPivot, vec childPivot, sf::Color color);
-        std::shared_ptr<SubSprite> addSubSprite(vec parentPivot, vec childPivot, sf::Color c, double angle);
+        SubSprite(vec parentPivot, vec childPivot, sf::Color color, vec size);
+        std::shared_ptr<SubSprite> addSubSprite(vec parentPivot, vec childPivot, sf::Color c, vec size, double angle);
         void draw(sf::RenderWindow* window, vec pos, double angle);
         void animate(double delta);
 };
@@ -31,7 +31,12 @@ class Sprite {
         std::shared_ptr<SubSprite> root;
         vec pos;
     public:
-        Sprite(vec pos);
+        Sprite(vec pos, sf::Color color, vec size);
         void draw(sf::RenderWindow* window, vec pos);
         std::shared_ptr<SubSprite> getRoot();
+};
+
+class Humanoid : public Sprite {
+    public: 
+        Humanoid(vec pos);
 };
