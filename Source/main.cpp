@@ -12,7 +12,20 @@ int main()
 	auto arm3 = 		arm2->addSubSprite(vec(175, 25), vec(25, 25), 	sf::Color::Yellow, 	vec(200, 50), 0);
 	auto arm4 = 		arm3->addSubSprite(vec(175, 25), vec(25, 25), 	sf::Color::Cyan, 	vec(200, 50), 0);
 
+	HumanoidAnimation animation;
+	HumanoidFrame frame1 = initHumanoidFrame(sf::milliseconds(500));
+	frame1.image.arm1l = 40;
+	frame1.image.arm2l = 50;
+	HumanoidFrame frame2 = initHumanoidFrame(sf::milliseconds(500));
+	frame2.image.arm1l = -20;
+	frame2.image.arm2l = -30;
+	animation.push(frame1);
+	animation.push(frame2);
+
 	Humanoid h(vec(0, 0));
+	h.setAnimation(animation);
+
+	sf::Clock clock;
 
     while (window.isOpen())
     {
@@ -23,11 +36,9 @@ int main()
                 window.close();
 			}
         }
+		sf::Time elapsed = clock.restart();
 
-		//arm1->animate(0.005);
-		//arm2->animate(-0.05);
-		//arm3->animate(0.1);
-		//arm4->animate(0.3);
+		h.animate(elapsed);
 
         window.clear();
         window.draw(shape);
