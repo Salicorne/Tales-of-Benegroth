@@ -5,28 +5,37 @@ vec rotate(vec ref, double angle) {
     return vec(ref.x * c - ref.y * s, ref.x * s + ref.y * c);
 }
 
-SubSprite::SubSprite(vec parentPivot, vec childPivot, sf::Color color, vec size) : parentPivot(parentPivot), childPivot(childPivot), angle(0) {
-    this->shape = sf::RectangleShape(size);
-    this->shape.setFillColor(color);
-    this->shape.setOrigin(childPivot);
+Texture::Texture(std::string path) : sf::Texture() {
+    if(!this->loadFromFile(path)) {
+        std::cerr << "Error loading texture from " << path << std::endl;
+    }
+    else {
+        std::cout << "Loaded texture " << path << std::endl;
+    }
 }
 
-std::shared_ptr<SubSprite> SubSprite::addSubSprite(vec parentPivot, vec childPivot, sf::Color c, vec size, double angle) {
-    auto s = std::make_shared<SubSprite>(parentPivot, childPivot, c, size);
+SubSprite::SubSprite(vec parentPivot, vec childPivot, std::shared_ptr<Texture> texture, sf::IntRect rect) : parentPivot(parentPivot), childPivot(childPivot), angle(0) {
+    this->spr.setTexture(*texture);
+    this->spr.setTextureRect(rect);
+    this->spr.setOrigin(childPivot);
+}
+
+std::shared_ptr<SubSprite> SubSprite::addSubSprite(vec parentPivot, vec childPivot, std::shared_ptr<Texture> texture, sf::IntRect rect, double angle) {
+    auto s = std::make_shared<SubSprite>(parentPivot, childPivot, texture, rect);
     s->angle = angle;
     this->children.push_back(s);
     return s;
 }
 
 void SubSprite::draw(sf::RenderWindow* window, vec pos, double angle) {
-    this->shape.setPosition(pos);
-    this->shape.setRotation(angle + this->angle);
+    this->spr.setPosition(pos);
+    this->spr.setRotation(angle + this->angle);
     // Draw children
     for(auto const i : this->children) {
         i->draw(window, pos - rotate(this->childPivot, angle + this->angle) + rotate(i->parentPivot, angle + this->angle), angle + this->angle);
     }
     // Draw self
-    window->draw(this->shape);
+    window->draw(this->spr);
 }
 
 double SubSprite::getAngle() {
@@ -37,7 +46,7 @@ void SubSprite::setAngle(double angle) {
     this->angle = angle;
 }
 
-Sprite::Sprite(vec rootPos, sf::Color color, vec size) : root(std::make_shared<SubSprite>(rootPos, vec(0, 0), color, size)) {
+Sprite::Sprite(vec rootPos, std::shared_ptr<Texture> texture, sf::IntRect rect) : root(std::make_shared<SubSprite>(rootPos, vec(0, 0), texture, rect)) {
     
 }
 
@@ -67,17 +76,17 @@ HumanoidFrame initHumanoidFrame(sf::Time time) {
     return frame;
 }
 
-Humanoid::Humanoid(vec pos) : Sprite(pos, sf::Color::Green, vec(80, 120)), desiredPosition(initHumanoidFrame(sf::Time::Zero).image), animationCounter(sf::Time::Zero) {
+Humanoid::Humanoid(vec pos, std::shared_ptr<Texture> tex) : Sprite(pos, tex, sf::IntRect(96, 72, 64, 88)), desiredPosition(initHumanoidFrame(sf::Time::Zero).image), animationCounter(sf::Time::Zero) {
     this->skeleton.body = this->root;
-    this->skeleton.head = this->root->addSubSprite(   vec(40, 5),   vec(30, 60), sf::Color::Yellow,  vec(60, 60), 0);
-    this->skeleton.arm1r = this->root->addSubSprite(  vec(75, 20),  vec(5, 10),  sf::Color::Magenta, vec(50, 20), 20);
-    this->skeleton.arm2r = skeleton.arm1r->addSubSprite(       vec(45, 10),  vec(5, 10),  sf::Color::Red,     vec(50, 20), 10);
-    this->skeleton.arm1l = this->root->addSubSprite(  vec(5, 20),   vec(45, 10), sf::Color::Magenta, vec(50, 20), -20);
-    this->skeleton.arm2l = skeleton.arm1l->addSubSprite(       vec(5, 10),   vec(45, 10), sf::Color::Red,     vec(50, 20), -10);
-    this->skeleton.leg1r = this->root->addSubSprite(  vec(60, 115), vec(10, 5),  sf::Color::Magenta, vec(20, 50), -10);
-    this->skeleton.leg2r = skeleton.leg1r->addSubSprite(       vec(10, 45),  vec(10, 5),  sf::Color::Red,     vec(20, 50), 5);
-    this->skeleton.leg1l = this->root->addSubSprite(  vec(20, 115), vec(10, 5),  sf::Color::Magenta, vec(20, 50), 10);
-    this->skeleton.leg2l = skeleton.leg1l->addSubSprite(       vec(10, 45),  vec(10, 5),  sf::Color::Red,     vec(20, 50), -5);
+    this->skeleton.head = this->root->addSubSprite(     vec(32, 5),   vec(32, 59), tex, sf::IntRect(96, 0, 64, 64),   0);
+    this->skeleton.arm1r = this->root->addSubSprite(    vec(56, 16), vec(5, 8),   tex, sf::IntRect(168, 80, 40, 16), 20);
+    this->skeleton.arm2r = skeleton.arm1r->addSubSprite(vec(35, 8),   vec(5, 8),   tex, sf::IntRect(216, 80, 40, 16), 10);
+    this->skeleton.arm1l = this->root->addSubSprite(    vec(8, 16),   vec(35, 8),  tex, sf::IntRect(48, 80, 40, 16),  -20);
+    this->skeleton.arm2l = skeleton.arm1l->addSubSprite(vec(5, 8),    vec(35, 8),  tex, sf::IntRect(0, 80, 40, 16),   -10);
+    this->skeleton.leg1r = this->root->addSubSprite(    vec(50, 70),  vec(8, 5),   tex, sf::IntRect(144, 168, 16, 40), -10);
+    this->skeleton.leg2r = skeleton.leg1r->addSubSprite(vec(8, 35),   vec(8, 5),   tex, sf::IntRect(144, 216, 16, 40), 5);
+    this->skeleton.leg1l = this->root->addSubSprite(    vec(14, 70),  vec(8, 5),   tex, sf::IntRect(96, 168, 16, 40), 10);
+    this->skeleton.leg2l = skeleton.leg1l->addSubSprite(vec(8, 35),   vec(8, 5),   tex, sf::IntRect(96, 216, 16, 40), -5);
 }
 
 void Humanoid::updateSkeleton(sf::Time elapsed) {
@@ -129,4 +138,13 @@ void Humanoid::animate(sf::Time elapsed) {
     this->desiredPosition.leg1l = frame.image.leg1l;
     this->desiredPosition.leg2l = frame.image.leg2l;
     this->updateSkeleton(elapsed);
+}
+
+
+AssetsCollector::AssetsCollector() {}
+
+std::shared_ptr<Texture> AssetsCollector::addTexture(std::string path) {
+    auto s = std::make_shared<Texture>(path);
+    this->textures.push_back(s);
+    return s;
 }

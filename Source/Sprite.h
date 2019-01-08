@@ -11,18 +11,22 @@ typedef sf::Vector2f vec;
 
 vec rotate(vec ref, double angle);
 
+class Texture : public sf::Texture {
+    public:
+        Texture(std::string path);
+};
+
 class SubSprite {
     protected:
         std::vector<std::shared_ptr<SubSprite>> children;
         vec parentPivot;
         vec childPivot;
         double angle;
-        sf::Color color;
-        sf::RectangleShape shape;
+        sf::Sprite spr;
 
     public: 
-        SubSprite(vec parentPivot, vec childPivot, sf::Color color, vec size);
-        std::shared_ptr<SubSprite> addSubSprite(vec parentPivot, vec childPivot, sf::Color c, vec size, double angle);
+        SubSprite(vec parentPivot, vec childPivot, std::shared_ptr<Texture> texture, sf::IntRect rect);
+        std::shared_ptr<SubSprite> addSubSprite(vec parentPivot, vec childPivot, std::shared_ptr<Texture> texture, sf::IntRect rect, double angle);
         void draw(sf::RenderWindow* window, vec pos, double angle);
         double getAngle();
         void setAngle(double angle);
@@ -33,7 +37,7 @@ class Sprite {
         std::shared_ptr<SubSprite> root;
         vec pos;
     public:
-        Sprite(vec pos, sf::Color color, vec size);
+        Sprite(vec pos, std::shared_ptr<Texture> texture, sf::IntRect rect);
         void draw(sf::RenderWindow* window, vec pos);
         std::shared_ptr<SubSprite> getRoot();
 };
@@ -72,7 +76,17 @@ class Humanoid : public Sprite {
         void updateMember(double& desired, std::shared_ptr<SubSprite> ss, sf::Time elapsed);
 
     public: 
-        Humanoid(vec pos);
+        Humanoid(vec pos, std::shared_ptr<Texture> tex);
         void setAnimation(HumanoidAnimation a);
         void animate(sf::Time elapsed);
+};
+
+class AssetsCollector {
+    protected:
+        std::vector<std::shared_ptr<Texture>> textures;
+        std::vector<std::shared_ptr<Sprite>> sprites;
+
+    public:
+        AssetsCollector();
+        std::shared_ptr<Texture> addTexture(std::string path);
 };
