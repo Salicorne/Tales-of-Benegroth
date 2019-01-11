@@ -6,6 +6,7 @@
 #include <memory>
 #include <cmath>
 #include <queue>
+#include "game.h"
 
 typedef sf::Vector2f vec;
 
@@ -32,14 +33,35 @@ class SubSprite {
         void setAngle(double angle);
 };
 
-class Sprite {
+class Pose {
     protected:
         std::shared_ptr<SubSprite> root;
         vec pos;
+
     public:
-        Sprite(vec pos, std::shared_ptr<Texture> texture, sf::IntRect rect);
+        Pose(vec pos, std::shared_ptr<Texture> texture, sf::IntRect rootRect);
         void draw(sf::RenderWindow* window, vec pos);
         std::shared_ptr<SubSprite> getRoot();
+};
+
+template <typename T> struct Oriented {
+    T north;
+    T south;
+    T east;
+    T west;
+};
+
+class Sprite {
+    protected:
+        Oriented<std::shared_ptr<Pose>> poses;
+        Game::Direction direction;
+
+    public: 
+        Sprite(vec pos, std::shared_ptr<Texture> texture, sf::IntRect rootRect);
+        std::shared_ptr<Pose> getPose(Game::Direction dir);
+        std::shared_ptr<Pose> getCurrentPose();
+        void addPose(Game::Direction dir, vec pos, std::shared_ptr<Texture> texture, sf::IntRect rootRect);
+        void setDirection(Game::Direction dir);
 };
 
 template <typename T> struct HumanoidData {
@@ -56,7 +78,8 @@ template <typename T> struct HumanoidData {
 };
 
 template <typename T> struct Frame {
-    T image;
+    T angles;
+    T scales;
     sf::Time duration;
 };
 
@@ -68,17 +91,20 @@ typedef std::queue<HumanoidFrame> HumanoidAnimation;
 
 class Humanoid : public Sprite {
     protected:
-        HumanoidData<std::shared_ptr<SubSprite>> skeleton;
+        Oriented<HumanoidData<std::shared_ptr<SubSprite>>> skeleton;
         HumanoidData<double> desiredPosition;
         sf::Time animationCounter;
         HumanoidAnimation animation;
         void updateSkeleton(sf::Time elapsed);
+        HumanoidData<std::shared_ptr<SubSprite>>& getCurrentSkeleton();
+        HumanoidData<std::shared_ptr<SubSprite>>& getSkeleton(Game::Direction dir);
         void updateMember(double& desired, std::shared_ptr<SubSprite> ss, sf::Time elapsed);
 
     public: 
         Humanoid(vec pos, std::shared_ptr<Texture> tex);
         void setAnimation(HumanoidAnimation a);
         void animate(sf::Time elapsed);
+        void addPose(Game::Direction dir, vec pos, std::shared_ptr<Texture> texture);
 };
 
 class AssetsCollector {
