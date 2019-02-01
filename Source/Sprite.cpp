@@ -5,6 +5,10 @@ vec rotate(vec ref, double angle) {
     return vec(ref.x * c - ref.y * s, ref.x * s + ref.y * c);
 }
 
+vec scaleY(vec ref, double yFactor) {
+    return vec(ref.x, ref.y * yFactor);
+}
+
 Texture::Texture(std::string path) : sf::Texture() {
     if(!this->loadFromFile(path)) {
         std::cerr << "Error loading texture from " << path << std::endl;
@@ -14,7 +18,7 @@ Texture::Texture(std::string path) : sf::Texture() {
     }
 }
 
-SubSprite::SubSprite(vec parentPivot, vec childPivot, std::shared_ptr<Texture> texture, sf::IntRect rect) : parentPivot(parentPivot), childPivot(childPivot), angle(0) {
+SubSprite::SubSprite(vec parentPivot, vec childPivot, std::shared_ptr<Texture> texture, sf::IntRect rect) : parentPivot(parentPivot), childPivot(childPivot), angle(0), scale(1) {
     this->spr.setTexture(*texture);
     this->spr.setTextureRect(rect);
     this->spr.setOrigin(childPivot);
@@ -32,7 +36,7 @@ void SubSprite::draw(sf::RenderWindow* window, vec pos, double angle) {
     this->spr.setRotation(angle + this->angle);
     // Draw children
     for(auto const i : this->children) {
-        i->draw(window, pos - rotate(this->childPivot, angle + this->angle) + rotate(i->parentPivot, angle + this->angle), angle + this->angle);
+        i->draw(window, pos - rotate(scaleY(this->childPivot, this->getScale()), angle + this->angle) + rotate(scaleY(i->parentPivot, this->getScale()), angle + this->angle), angle + this->angle);
     }
     // Draw self
     window->draw(this->spr);
@@ -44,6 +48,14 @@ double SubSprite::getAngle() {
 
 void SubSprite::setAngle(double angle) {
     this->angle = angle;
+}
+
+double SubSprite::getScale() {
+    return this->spr.getScale().y;
+}
+
+void SubSprite::setScale(double scale) {
+    this->spr.setScale(vec(1.0, scale));
 }
 
 Pose::Pose(vec rootPos, std::shared_ptr<Texture> texture, sf::IntRect rootRect) : root(std::make_shared<SubSprite>(rootPos, vec(0, 0), texture, rootRect)) {
@@ -113,16 +125,16 @@ HumanoidFrame initHumanoidFrame(sf::Time time) {
     angles.leg2r = NAN;
     angles.leg1l = NAN;
     angles.leg2l = NAN;
-    scales.head = 1;
-    scales.body = 1;
-    scales.arm1r = 1;
-    scales.arm2r = 1;
-    scales.arm1l = 1;
-    scales.arm2l = 1;
-    scales.leg1r = 1;
-    scales.leg2r = 1;
-    scales.leg1l = 1;
-    scales.leg2l = 1;
+    scales.head = NAN;
+    scales.body = NAN;
+    scales.arm1r = NAN;
+    scales.arm2r = NAN;
+    scales.arm1l = NAN;
+    scales.arm2l = NAN;
+    scales.leg1r = NAN;
+    scales.leg2r = NAN;
+    scales.leg1l = NAN;
+    scales.leg2l = NAN;
     HumanoidFrame frame;
     frame.angles = angles;
     frame.scales = scales;
@@ -130,7 +142,7 @@ HumanoidFrame initHumanoidFrame(sf::Time time) {
     return frame;
 }
 
-Humanoid::Humanoid(vec pos, std::shared_ptr<Texture> tex) : Sprite(pos, tex, sf::IntRect(96, 72, 64, 88)), desiredPosition(initHumanoidFrame(sf::Time::Zero).angles), animationCounter(sf::Time::Zero) {
+Humanoid::Humanoid(vec pos, std::shared_ptr<Texture> tex) : Sprite(pos, tex, sf::IntRect(96, 72, 64, 88)), desiredAngles(initHumanoidFrame(sf::Time::Zero).angles), animationCounter(sf::Time::Zero) {
     this->skeleton.south.body = this->getPose(Game::Direction::South)->getRoot();
     this->skeleton.south.head = this->getPose(Game::Direction::South)->getRoot()->addSubSprite(    vec(32, 5),   vec(32, 59), tex, sf::IntRect(96, 0, 64, 64),   0);
     this->skeleton.south.arm1r = this->getPose(Game::Direction::South)->getRoot()->addSubSprite(   vec(56, 16),  vec(5, 8),   tex, sf::IntRect(168, 80, 40, 16), 20);
@@ -144,16 +156,16 @@ Humanoid::Humanoid(vec pos, std::shared_ptr<Texture> tex) : Sprite(pos, tex, sf:
 }
 
 void Humanoid::updateSkeleton(sf::Time elapsed) {
-    this->updateMember(this->desiredPosition.head, this->getCurrentSkeleton().head, elapsed);
-    this->updateMember(this->desiredPosition.body, this->getCurrentSkeleton().body, elapsed);
-    this->updateMember(this->desiredPosition.arm1r, this->getCurrentSkeleton().arm1r, elapsed);
-    this->updateMember(this->desiredPosition.arm2r, this->getCurrentSkeleton().arm2r, elapsed);
-    this->updateMember(this->desiredPosition.arm1l, this->getCurrentSkeleton().arm1l, elapsed);
-    this->updateMember(this->desiredPosition.arm2l, this->getCurrentSkeleton().arm2l, elapsed);
-    this->updateMember(this->desiredPosition.leg1r, this->getCurrentSkeleton().leg1r, elapsed);
-    this->updateMember(this->desiredPosition.leg2r, this->getCurrentSkeleton().leg2r, elapsed);
-    this->updateMember(this->desiredPosition.leg1l, this->getCurrentSkeleton().leg1l, elapsed);
-    this->updateMember(this->desiredPosition.leg2l, this->getCurrentSkeleton().leg2l, elapsed);
+    this->updateMember(this->desiredAngles.head, this->desiredScales.head, this->getCurrentSkeleton().head, elapsed);
+    this->updateMember(this->desiredAngles.body, this->desiredScales.body, this->getCurrentSkeleton().body, elapsed);
+    this->updateMember(this->desiredAngles.arm1r, this->desiredScales.arm1r, this->getCurrentSkeleton().arm1r, elapsed);
+    this->updateMember(this->desiredAngles.arm2r, this->desiredScales.arm2r, this->getCurrentSkeleton().arm2r, elapsed);
+    this->updateMember(this->desiredAngles.arm1l, this->desiredScales.arm1l, this->getCurrentSkeleton().arm1l, elapsed);
+    this->updateMember(this->desiredAngles.arm2l, this->desiredScales.arm2l, this->getCurrentSkeleton().arm2l, elapsed);
+    this->updateMember(this->desiredAngles.leg1r, this->desiredScales.leg1r, this->getCurrentSkeleton().leg1r, elapsed);
+    this->updateMember(this->desiredAngles.leg2r, this->desiredScales.leg2r, this->getCurrentSkeleton().leg2r, elapsed);
+    this->updateMember(this->desiredAngles.leg1l, this->desiredScales.leg1l, this->getCurrentSkeleton().leg1l, elapsed);
+    this->updateMember(this->desiredAngles.leg2l, this->desiredScales.leg2l, this->getCurrentSkeleton().leg2l, elapsed);
 }
 
 HumanoidData<std::shared_ptr<SubSprite>>& Humanoid::getSkeleton(Game::Direction dir) {
@@ -173,11 +185,19 @@ HumanoidData<std::shared_ptr<SubSprite>>& Humanoid::getCurrentSkeleton() {
     return this->getSkeleton(this->direction);
 }
 
-void Humanoid::updateMember(double& desired, std::shared_ptr<SubSprite> ss, sf::Time elapsed) {
-    if(!std::isnan(desired)) {
-        double delta = (desired - ss->getAngle()) * elapsed.asSeconds() * 15;
+void Humanoid::updateMember(double& desiredAngle, double& desiredScale, std::shared_ptr<SubSprite> ss, sf::Time elapsed) {
+    // Update angle
+    if(!std::isnan(desiredAngle)) {
+        double delta = (desiredAngle - ss->getAngle()) * elapsed.asSeconds() * 15;
         if(fabs(delta) > 0.00001) { 
             ss->setAngle(ss->getAngle() + delta);
+        }
+    }
+    // Update scale
+    if(!std::isnan(desiredScale)) {
+        double delta = (desiredScale - ss->getScale()) * elapsed.asSeconds() * 15;
+        if(fabs(delta) > 0.01) { 
+            ss->setScale(ss->getScale() + delta);
         }
     }
 }
@@ -198,16 +218,26 @@ void Humanoid::animate(sf::Time elapsed) {
         frame = this->animation.front();
     }
     // Apply frame
-    this->desiredPosition.head = frame.angles.head;
-    this->desiredPosition.body = frame.angles.body;
-    this->desiredPosition.arm1r = frame.angles.arm1r;
-    this->desiredPosition.arm2r = frame.angles.arm2r;
-    this->desiredPosition.arm1l = frame.angles.arm1l;
-    this->desiredPosition.arm2l = frame.angles.arm2l;
-    this->desiredPosition.leg1r = frame.angles.leg1r;
-    this->desiredPosition.leg2r = frame.angles.leg2r;
-    this->desiredPosition.leg1l = frame.angles.leg1l;
-    this->desiredPosition.leg2l = frame.angles.leg2l;
+    this->desiredAngles.head = frame.angles.head;
+    this->desiredAngles.body = frame.angles.body;
+    this->desiredAngles.arm1r = frame.angles.arm1r;
+    this->desiredAngles.arm2r = frame.angles.arm2r;
+    this->desiredAngles.arm1l = frame.angles.arm1l;
+    this->desiredAngles.arm2l = frame.angles.arm2l;
+    this->desiredAngles.leg1r = frame.angles.leg1r;
+    this->desiredAngles.leg2r = frame.angles.leg2r;
+    this->desiredAngles.leg1l = frame.angles.leg1l;
+    this->desiredAngles.leg2l = frame.angles.leg2l;
+    this->desiredScales.head = frame.scales.head;
+    this->desiredScales.body = frame.scales.body;
+    this->desiredScales.arm1r = frame.scales.arm1r;
+    this->desiredScales.arm2r = frame.scales.arm2r;
+    this->desiredScales.arm1l = frame.scales.arm1l;
+    this->desiredScales.arm2l = frame.scales.arm2l;
+    this->desiredScales.leg1r = frame.scales.leg1r;
+    this->desiredScales.leg2r = frame.scales.leg2r;
+    this->desiredScales.leg1l = frame.scales.leg1l;
+    this->desiredScales.leg2l = frame.scales.leg2l;
     this->updateSkeleton(elapsed);
 }
 

@@ -11,6 +11,7 @@
 typedef sf::Vector2f vec;
 
 vec rotate(vec ref, double angle);
+vec scaleY(vec ref, double yFactor);
 
 class Texture : public sf::Texture {
     public:
@@ -23,6 +24,7 @@ class SubSprite {
         vec parentPivot;
         vec childPivot;
         double angle;
+        double scale;
         sf::Sprite spr;
 
     public: 
@@ -31,6 +33,8 @@ class SubSprite {
         void draw(sf::RenderWindow* window, vec pos, double angle);
         double getAngle();
         void setAngle(double angle);
+        double getScale();
+        void setScale(double scale);
 };
 
 class Pose {
@@ -92,13 +96,14 @@ typedef std::queue<HumanoidFrame> HumanoidAnimation;
 class Humanoid : public Sprite {
     protected:
         Oriented<HumanoidData<std::shared_ptr<SubSprite>>> skeleton;
-        HumanoidData<double> desiredPosition;
+        HumanoidData<double> desiredAngles;
+        HumanoidData<double> desiredScales;
         sf::Time animationCounter;
         HumanoidAnimation animation;
         void updateSkeleton(sf::Time elapsed);
         HumanoidData<std::shared_ptr<SubSprite>>& getCurrentSkeleton();
         HumanoidData<std::shared_ptr<SubSprite>>& getSkeleton(Game::Direction dir);
-        void updateMember(double& desired, std::shared_ptr<SubSprite> ss, sf::Time elapsed);
+        void updateMember(double& desiredAngle, double& desiredScale, std::shared_ptr<SubSprite> ss, sf::Time elapsed);
 
     public: 
         Humanoid(vec pos, std::shared_ptr<Texture> tex);

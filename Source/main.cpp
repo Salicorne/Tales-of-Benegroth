@@ -11,10 +11,16 @@ int main()
 	frame1.angles.arm1l = 40;
 	frame1.angles.arm2l = 50;
 	frame1.angles.head = -10;
+	frame1.scales.arm1l = 2;
+	frame1.scales.leg1l = 2;
+	frame1.angles.leg2l = 10;
 	HumanoidFrame frame2 = initHumanoidFrame(sf::milliseconds(500));
 	frame2.angles.arm1l = -20;
 	frame2.angles.arm2l = -30;
 	frame2.angles.head = 10;
+	frame2.scales.arm1l = 1;
+	frame2.scales.leg1l = 1;
+	frame2.angles.leg2l = 50;
 	animation.push(frame1);
 	animation.push(frame2);
 
